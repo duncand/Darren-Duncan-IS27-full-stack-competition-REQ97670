@@ -1,0 +1,10 @@
+{
+  "short_name": "BC - Staff Directory (BCSD)",
+  "name": "Province of British Columbia - Staff Directory (BCSD) - WEBAPP",
+  "icons": [
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#ffffff",
+  "background_color": "#000000"
+}
