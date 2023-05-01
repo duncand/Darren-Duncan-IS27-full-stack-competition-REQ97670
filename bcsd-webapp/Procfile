@@ -1,1 +1,1 @@
-web: REACT_APP_DBMS_HOST=bcsd-dbms.herokuapp.com REACT_APP_DBMS_PORT=80 npm run build && serve -s build
+web: REACT_APP_DBMS_HOST=req97670-bcsd-dbms.herokuapp.com REACT_APP_DBMS_PORT=80 npm run build && serve -s build

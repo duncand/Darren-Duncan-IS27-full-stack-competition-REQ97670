@@ -5,8 +5,16 @@ directory for an organization, where employees are organized in a
 hierarchy; it supports adding, editing, and removing employee records,
 which includes changing their position in the hierarchy.
 
-The canonical home of BCSD is
+The canonical home of this BCSD source code is
 <https://github.com/duncand/Darren-Duncan-IS27-full-stack-competition-REQ97670>.
+
+A temporary live deployment of BCSD is on Heroku.
+
+Visit <http://req97670-bcsd-webapp.herokuapp.com> in a web browser to
+actually use the application as a regular end user.
+
+Visit <http://req97670-bcsd-dbms.herokuapp.com/api/api-docs> to view the
+interactive REST API documentation which lets you invoke the API directly.
 
 ## Structure
 
