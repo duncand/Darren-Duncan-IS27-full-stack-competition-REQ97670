@@ -19,8 +19,11 @@ export class HealthController {
     type: 'Health Check',
   })
   check() {
+    // What we should be listening on.
+    const host = process.env.HOST || '127.0.0.1';
+    const port = process.env.PORT || 80;
     return this.health.check([
-      () => this.http.pingCheck('/api/employees', 'http://localhost:3000/api/employees'),
+      () => this.http.pingCheck('/api/employees', 'http://'+host+':'+port+'/api/employees'),
     ]);
   }
 }
