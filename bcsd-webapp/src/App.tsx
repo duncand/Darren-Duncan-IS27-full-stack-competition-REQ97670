@@ -8,14 +8,14 @@ import {
 } from 'react-router-dom';
 
 import {
-  Employee,
-  EmployeeMaybeSansEmployeeSurrogateIDs,
+  Position,
+  PositionMaybeSansPositionSurrogateIDs,
   levelCodes,
   levelTitles,
   levelLimits,
-  isEmployee,
-  isEmployeeSansEmployeeSurrogateIDs,
-  isEmployees,
+  isPosition,
+  isPositionSansPositionSurrogateIDs,
+  isPositions,
 } from './app-types';
 
 import './App.css';
@@ -23,19 +23,19 @@ import './App.css';
 // Note, for any uses of useEffect(), providing the second "optional" arg
 // even if the empty array is necessary to avoid infinite useEffect() calls.
 
-interface EmployeeCEDProps {
-  employeeMSESI: EmployeeMaybeSansEmployeeSurrogateIDs;
-  assignTo_employeeMSESI: (x: EmployeeMaybeSansEmployeeSurrogateIDs) => void;
+interface PositionCEDProps {
+  positionMSESI: PositionMaybeSansPositionSurrogateIDs;
+  assignTo_positionMSESI: (x: PositionMaybeSansPositionSurrogateIDs) => void;
   forDisplayOnly: boolean;
 }
 
 interface DisplayOfOneLevelProps {
   levelCode: string;
-  employees: Array<Employee>;
+  positions: Array<Position>;
 }
 
 interface DisplayOfAllLevelsProps {
-  employees: Array<Employee>;
+  positions: Array<Position>;
 }
 
 function dbmsUriBase(): string {
@@ -45,13 +45,13 @@ function dbmsUriBase(): string {
   return 'http://'+host+':'+port+'/api';
 }
 
-function DisplayOfOneLevel({ levelCode, employees }: DisplayOfOneLevelProps) {
-  const filteredEmployees = employees.filter(
-    (employee) => employee.employeeLevel === levelCode);
+function DisplayOfOneLevel({ levelCode, positions }: DisplayOfOneLevelProps) {
+  const filteredPositions = positions.filter(
+    (position) => position.positionLevel === levelCode);
 
-  if (filteredEmployees.length === 0) {
+  if (filteredPositions.length === 0) {
     return(
-      <p>There are no employees in this level.</p>
+      <p>There are no positions in this level.</p>
     );
   }
 
@@ -59,25 +59,25 @@ function DisplayOfOneLevel({ levelCode, employees }: DisplayOfOneLevelProps) {
     <tr>
       <th></th>
       <th></th>
-      <th>Employee Surrogate ID</th>
-      <th>Employee First Name</th>
-      <th>Employee Last Name</th>
-      <th>Employee Number</th>
-      <th>Employee Level</th>
-      <th>Employee Notes</th>
+      <th>Position Surrogate ID</th>
+      <th>Position First Name</th>
+      <th>Position Last Name</th>
+      <th>Position Number</th>
+      <th>Position Level</th>
+      <th>Position Notes</th>
     </tr>
   );
 
-  const tableRows = filteredEmployees.map((employee) =>
-    <tr key={employee.employeeSurrogateID}>
-      <td><Link to={'/edit/' + employee.employeeSurrogateID}>Edit</Link></td>
-      <td><Link to={'/delete/' + employee.employeeSurrogateID}>Delete</Link></td>
-      <td>{employee.employeeSurrogateID}</td>
-      <td>{employee.employeeFirstName}</td>
-      <td>{employee.employeeLastName}</td>
-      <td>{employee.employeeNumber}</td>
-      <td>{employee.employeeLevel}</td>
-      <td>{employee.employeeNotes}</td>
+  const tableRows = filteredPositions.map((position) =>
+    <tr key={position.positionSurrogateID}>
+      <td><Link to={'/edit/' + position.positionSurrogateID}>Edit</Link></td>
+      <td><Link to={'/delete/' + position.positionSurrogateID}>Delete</Link></td>
+      <td>{position.positionSurrogateID}</td>
+      <td>{position.positionFirstName}</td>
+      <td>{position.positionLastName}</td>
+      <td>{position.positionNumber}</td>
+      <td>{position.positionLevel}</td>
+      <td>{position.positionNotes}</td>
     </tr>
   );
 
@@ -93,12 +93,12 @@ function DisplayOfOneLevel({ levelCode, employees }: DisplayOfOneLevelProps) {
   );
 }
 
-function DisplayOfAllLevels({ employees }: DisplayOfAllLevelsProps) {
+function DisplayOfAllLevels({ positions }: DisplayOfAllLevelsProps) {
   const tableHeading = (
     <tr>
       <th>Level Title</th>
       <th>Level Number</th>
-      <th>Employees</th>
+      <th>Positions</th>
     </tr>
   );
 
@@ -114,7 +114,7 @@ function DisplayOfAllLevels({ employees }: DisplayOfAllLevelsProps) {
         <td>{index + 1}</td>
         <td><DisplayOfOneLevel
           levelCode={levelCode}
-          employees={employees}
+          positions={positions}
         /></td>
       </tr>
     )
@@ -122,8 +122,8 @@ function DisplayOfAllLevels({ employees }: DisplayOfAllLevelsProps) {
 
   return (
     <>
-      <p>Total of {employees.length} employees displayed.</p>
-      <p><Link to={'/create'}>Add</Link> a new employee.</p>
+      <p>Total of {positions.length} positions displayed.</p>
+      <p><Link to={'/create'}>Add</Link> a new position.</p>
       <table>
         <thead>
           {tableHeading}
@@ -136,75 +136,75 @@ function DisplayOfAllLevels({ employees }: DisplayOfAllLevelsProps) {
   );
 }
 
-function ViewAllEmployeesPage() {
-  const [isEmployeesFetchError, assignTo_isEmployeesFetchError] = useState<boolean>(true);
-  const [employees, assignTo_employees] = useState<Array<Employee>>([]);
+function ViewAllPositionsPage() {
+  const [isPositionsFetchError, assignTo_isPositionsFetchError] = useState<boolean>(true);
+  const [positions, assignTo_positions] = useState<Array<Position>>([]);
 
   useEffect(() => {
-    fetch(dbmsUriBase() + '/employees')
+    fetch(dbmsUriBase() + '/positions')
       .then((response) => {
         if (response.status === 200) {
-          assignTo_isEmployeesFetchError(false);
+          assignTo_isPositionsFetchError(false);
           return response.json();
         }
         else {
-          assignTo_isEmployeesFetchError(true);
+          assignTo_isPositionsFetchError(true);
         }
       })
       .then((data) => {
-        if (!isEmployees(data)) {
-          assignTo_isEmployeesFetchError(true);
+        if (!isPositions(data)) {
+          assignTo_isPositionsFetchError(true);
         }
         else {
-          assignTo_employees(data);
+          assignTo_positions(data);
         }
       })
       .catch((err) => {
-        assignTo_isEmployeesFetchError(true);
+        assignTo_isPositionsFetchError(true);
         console.log(err.message);
       });
   }, []);
 
-  if (isEmployeesFetchError) {
+  if (isPositionsFetchError) {
     return (
-      <p>Failed to fetch employees.</p>
+      <p>Failed to fetch positions.</p>
     )
   }
 
   return (
-    <DisplayOfAllLevels employees={employees} />
+    <DisplayOfAllLevels positions={positions} />
   );
 }
 
-function EmployeeFormFieldsSansEmployeeSurrogateIDs(
+function PositionFormFieldsSansPositionSurrogateIDs(
     {
-      employeeMSESI,
-      assignTo_employeeMSESI,
+      positionMSESI,
+      assignTo_positionMSESI,
       forDisplayOnly,
-    }: EmployeeCEDProps) {
+    }: PositionCEDProps) {
 
   if (forDisplayOnly) {
     return (
       <>
         <tr>
-          <td>Employee First Name:</td>
-          <td>{employeeMSESI.employeeFirstName}</td>
+          <td>Position First Name:</td>
+          <td>{positionMSESI.positionFirstName}</td>
         </tr>
         <tr>
-          <td>Employee Last Name:</td>
-          <td>{employeeMSESI.employeeLastName}</td>
+          <td>Position Last Name:</td>
+          <td>{positionMSESI.positionLastName}</td>
         </tr>
         <tr>
-          <td>Employee Number:</td>
-          <td>{employeeMSESI.employeeNumber}</td>
+          <td>Position Number:</td>
+          <td>{positionMSESI.positionNumber}</td>
         </tr>
         <tr>
-          <td>Employee Level:</td>
-          <td>{employeeMSESI.employeeLevel}</td>
+          <td>Position Level:</td>
+          <td>{positionMSESI.positionLevel}</td>
         </tr>
         <tr>
-          <td>Employee Notes:</td>
-          <td>{employeeMSESI.employeeNotes}</td>
+          <td>Position Notes:</td>
+          <td>{positionMSESI.positionNotes}</td>
         </tr>
       </>
     );
@@ -213,91 +213,91 @@ function EmployeeFormFieldsSansEmployeeSurrogateIDs(
   return (
     <>
       <tr>
-        <td>Employee First Name:</td>
+        <td>Position First Name:</td>
         <td><input
           type="text"
-          id="employeeFirstName"
-          name="employeeFirstName"
-          value={employeeMSESI.employeeFirstName}
-          onChange={(e) => assignTo_employeeMSESI({ ...employeeMSESI, employeeFirstName: e.target.value })}
+          id="positionFirstName"
+          name="positionFirstName"
+          value={positionMSESI.positionFirstName}
+          onChange={(e) => assignTo_positionMSESI({ ...positionMSESI, positionFirstName: e.target.value })}
           /></td>
       </tr>
       <tr>
-        <td>Employee Last Name:</td>
+        <td>Position Last Name:</td>
         <td><input
           type="text"
-          id="employeeLastName"
-          name="employeeLastName"
-          value={employeeMSESI.employeeLastName}
-          onChange={(e) => assignTo_employeeMSESI({ ...employeeMSESI, employeeLastName: e.target.value })}
+          id="positionLastName"
+          name="positionLastName"
+          value={positionMSESI.positionLastName}
+          onChange={(e) => assignTo_positionMSESI({ ...positionMSESI, positionLastName: e.target.value })}
           /></td>
       </tr>
       <tr>
-        <td>Employee Number:</td>
+        <td>Position Number:</td>
         <td><input
           type="text"
-          id="employeeNumber"
-          name="employeeNumber"
-          value={employeeMSESI.employeeNumber}
-          onChange={(e) => assignTo_employeeMSESI({ ...employeeMSESI, employeeNumber: e.target.value })}
+          id="positionNumber"
+          name="positionNumber"
+          value={positionMSESI.positionNumber}
+          onChange={(e) => assignTo_positionMSESI({ ...positionMSESI, positionNumber: e.target.value })}
           /></td>
       </tr>
       <tr>
-        <td>Employee Level:</td>
+        <td>Position Level:</td>
         <td><input
           type="text"
-          id="employeeLevel"
-          name="employeeLevel"
-          value={employeeMSESI.employeeLevel}
-          onChange={(e) => assignTo_employeeMSESI({ ...employeeMSESI, employeeLevel: e.target.value })}
+          id="positionLevel"
+          name="positionLevel"
+          value={positionMSESI.positionLevel}
+          onChange={(e) => assignTo_positionMSESI({ ...positionMSESI, positionLevel: e.target.value })}
           /></td>
       </tr>
       <tr>
-        <td>Employee Notes:</td>
+        <td>Position Notes:</td>
         <td><input
           type="text"
-          id="employeeNotes"
-          name="employeeNotes"
-          value={employeeMSESI.employeeNotes}
-          onChange={(e) => assignTo_employeeMSESI({ ...employeeMSESI, employeeNotes: e.target.value })}
+          id="positionNotes"
+          name="positionNotes"
+          value={positionMSESI.positionNotes}
+          onChange={(e) => assignTo_positionMSESI({ ...positionMSESI, positionNotes: e.target.value })}
           /></td>
       </tr>
     </>
   );
 }
 
-function normalizedEmployeeSansEmployeeSurrogateIDs(
-    employeeMSESI: EmployeeMaybeSansEmployeeSurrogateIDs): EmployeeMaybeSansEmployeeSurrogateIDs {
+function normalizedPositionSansPositionSurrogateIDs(
+    positionMSESI: PositionMaybeSansPositionSurrogateIDs): PositionMaybeSansPositionSurrogateIDs {
   return {
-    employeeFirstName: employeeMSESI.employeeFirstName.trim(),
-    employeeLastName: employeeMSESI.employeeLastName.trim(),
-    employeeNumber: employeeMSESI.employeeNumber.trim(),
-    employeeLevel: employeeMSESI.employeeLevel.trim(),
-    employeeNotes: employeeMSESI.employeeNotes.trim(),
+    positionFirstName: positionMSESI.positionFirstName.trim(),
+    positionLastName: positionMSESI.positionLastName.trim(),
+    positionNumber: positionMSESI.positionNumber.trim(),
+    positionLevel: positionMSESI.positionLevel.trim(),
+    positionNotes: positionMSESI.positionNotes.trim(),
   };
 }
 
-function CreateOneEmployeePage() {
-  const [employeeMSESI, assignTo_employeeMSESI] = useState<EmployeeMaybeSansEmployeeSurrogateIDs>({
-    employeeFirstName: '',
-    employeeLastName: '',
-    employeeNumber: '',
-    employeeLevel: '',
-    employeeNotes: '',
+function CreateOnePositionPage() {
+  const [positionMSESI, assignTo_positionMSESI] = useState<PositionMaybeSansPositionSurrogateIDs>({
+    positionFirstName: '',
+    positionLastName: '',
+    positionNumber: '',
+    positionLevel: '',
+    positionNotes: '',
   });
 
-  function handleEmployeeCreateFormSubmit(event: React.FormEvent<HTMLFormElement>) {
+  function handlePositionCreateFormSubmit(event: React.FormEvent<HTMLFormElement>) {
     // Prevent page from submitting.
     event.preventDefault();
-    const normProdMSESI = normalizedEmployeeSansEmployeeSurrogateIDs(employeeMSESI);
+    const normProdMSESI = normalizedPositionSansPositionSurrogateIDs(positionMSESI);
     console.log('save button clicked with '+JSON.stringify(normProdMSESI));
-    if (!isEmployeeSansEmployeeSurrogateIDs(normProdMSESI)) {
+    if (!isPositionSansPositionSurrogateIDs(normProdMSESI)) {
       alert('Every field must be non-empty to save changes.');
       return;
     }
-    fetch(dbmsUriBase() + '/employees/', {
+    fetch(dbmsUriBase() + '/positions/', {
         method: 'POST',
-        body: JSON.stringify(normalizedEmployeeSansEmployeeSurrogateIDs(normProdMSESI)),
+        body: JSON.stringify(normalizedPositionSansPositionSurrogateIDs(normProdMSESI)),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
         },
@@ -307,7 +307,7 @@ function CreateOneEmployeePage() {
           alert('Changes were saved.');
         }
         else if (response.status === 400) {
-          alert('Failed to save changes as bad client request; you might have exceeded the limit on how many employees may have this Level.');
+          alert('Failed to save changes as bad client request; you might have exceeded the limit on how many positions may have this Level.');
         }
         else {
           alert('Something else happened: '+response.status+' '+response.statusText);
@@ -322,18 +322,18 @@ function CreateOneEmployeePage() {
 
   return (
     <>
-      <h2>Add an Employee</h2>
-      <p><Link to={'/'}>Return</Link> to the employee listing page.</p>
-      <form onSubmit={handleEmployeeCreateFormSubmit}>
+      <h2>Add an Position</h2>
+      <p><Link to={'/'}>Return</Link> to the position listing page.</p>
+      <form onSubmit={handlePositionCreateFormSubmit}>
         <table>
           <tbody>
             <tr>
-              <td>Employee Surrogate ID:</td>
+              <td>Position Surrogate ID:</td>
               <td>(Will be generated.)</td>
             </tr>
-            <EmployeeFormFieldsSansEmployeeSurrogateIDs
-              employeeMSESI={employeeMSESI}
-              assignTo_employeeMSESI={assignTo_employeeMSESI}
+            <PositionFormFieldsSansPositionSurrogateIDs
+              positionMSESI={positionMSESI}
+              assignTo_positionMSESI={assignTo_positionMSESI}
               forDisplayOnly={false}
             />
             <tr>
@@ -347,62 +347,62 @@ function CreateOneEmployeePage() {
   );
 }
 
-function EditOneEmployeePage() {
-  const { employeeSurrogateID } = useParams();
+function EditOnePositionPage() {
+  const { positionSurrogateID } = useParams();
 
-  const [isEmployeeFetchError, assignTo_isEmployeeFetchError] = useState<boolean>(true);
-  const [employeeMSESI, assignTo_employeeMSESI] = useState<EmployeeMaybeSansEmployeeSurrogateIDs>({
-    employeeFirstName: '',
-    employeeLastName: '',
-    employeeNumber: '',
-    employeeLevel: '',
-    employeeNotes: '',
+  const [isPositionFetchError, assignTo_isPositionFetchError] = useState<boolean>(true);
+  const [positionMSESI, assignTo_positionMSESI] = useState<PositionMaybeSansPositionSurrogateIDs>({
+    positionFirstName: '',
+    positionLastName: '',
+    positionNumber: '',
+    positionLevel: '',
+    positionNotes: '',
   });
 
   useEffect(() => {
-    fetch(dbmsUriBase() + '/employees/'+employeeSurrogateID)
+    fetch(dbmsUriBase() + '/positions/'+positionSurrogateID)
       .then((response) => {
         if (response.status === 200) {
-          assignTo_isEmployeeFetchError(false);
+          assignTo_isPositionFetchError(false);
           return response.json();
         }
         else {
-          assignTo_isEmployeeFetchError(true);
+          assignTo_isPositionFetchError(true);
         }
       })
       .then((data) => {
-        if (!isEmployee(data)) {
-          assignTo_isEmployeeFetchError(true);
+        if (!isPosition(data)) {
+          assignTo_isPositionFetchError(true);
         }
         else {
-          assignTo_employeeMSESI(data);
+          assignTo_positionMSESI(data);
         }
       })
       .catch((err) => {
-        assignTo_isEmployeeFetchError(true);
+        assignTo_isPositionFetchError(true);
         console.log(err.message);
       });
-  }, [employeeSurrogateID]);
+  }, [positionSurrogateID]);
 
-  if (isEmployeeFetchError) {
+  if (isPositionFetchError) {
     return (
-      <p>Failed to fetch employee.</p>
+      <p>Failed to fetch position.</p>
     )
   }
 
-  function handleEmployeeEditFormSubmit(event: React.FormEvent<HTMLFormElement>) {
+  function handlePositionEditFormSubmit(event: React.FormEvent<HTMLFormElement>) {
     // Prevent page from submitting.
     event.preventDefault();
-    const normProdMSESI = normalizedEmployeeSansEmployeeSurrogateIDs(employeeMSESI);
-    const employee: Employee = { ...normProdMSESI, employeeSurrogateID: employeeSurrogateID || '' };
-    console.log('save button clicked with '+JSON.stringify(employee));
-    if (!isEmployee(employee)) {
+    const normProdMSESI = normalizedPositionSansPositionSurrogateIDs(positionMSESI);
+    const position: Position = { ...normProdMSESI, positionSurrogateID: positionSurrogateID || '' };
+    console.log('save button clicked with '+JSON.stringify(position));
+    if (!isPosition(position)) {
       alert('Every field must be non-empty to save changes.');
       return;
     }
-    fetch(dbmsUriBase() + '/employees/'+employeeSurrogateID+'/', {
+    fetch(dbmsUriBase() + '/positions/'+positionSurrogateID+'/', {
         method: 'PUT',
-        body: JSON.stringify(employee),
+        body: JSON.stringify(position),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
         },
@@ -412,10 +412,10 @@ function EditOneEmployeePage() {
           alert('Changes were saved.');
         }
         else if (response.status === 400) {
-          alert('Failed to save changes as bad client request; you might have exceeded the limit on how many employees may have this Level.');
+          alert('Failed to save changes as bad client request; you might have exceeded the limit on how many positions may have this Level.');
         }
         else if (response.status === 404) {
-          alert('Failed to save changes as employee no longer in database.');
+          alert('Failed to save changes as position no longer in database.');
         }
         else {
           alert('Something else happened: '+response.status+' '+response.statusText);
@@ -430,18 +430,18 @@ function EditOneEmployeePage() {
 
   return (
     <>
-      <h2>Edit an Employee</h2>
-      <p><Link to={'/'}>Return</Link> to the employee listing page.</p>
-      <form onSubmit={handleEmployeeEditFormSubmit}>
+      <h2>Edit an Position</h2>
+      <p><Link to={'/'}>Return</Link> to the position listing page.</p>
+      <form onSubmit={handlePositionEditFormSubmit}>
         <table>
           <tbody>
             <tr>
-              <td>Employee Surrogate ID:</td>
-              <td>{employeeSurrogateID}</td>
+              <td>Position Surrogate ID:</td>
+              <td>{positionSurrogateID}</td>
             </tr>
-            <EmployeeFormFieldsSansEmployeeSurrogateIDs
-              employeeMSESI={employeeMSESI}
-              assignTo_employeeMSESI={assignTo_employeeMSESI}
+            <PositionFormFieldsSansPositionSurrogateIDs
+              positionMSESI={positionMSESI}
+              assignTo_positionMSESI={assignTo_positionMSESI}
               forDisplayOnly={false}
             />
             <tr>
@@ -455,72 +455,72 @@ function EditOneEmployeePage() {
   );
 }
 
-function DeleteOneEmployeePage() {
-  const { employeeSurrogateID } = useParams();
+function DeleteOnePositionPage() {
+  const { positionSurrogateID } = useParams();
 
-  const [isEmployeeFetchError, assignTo_isEmployeeFetchError] = useState<boolean>(true);
-  const [employeeMSESI, assignTo_employeeMSESI] = useState<EmployeeMaybeSansEmployeeSurrogateIDs>({
-    employeeFirstName: '',
-    employeeLastName: '',
-    employeeNumber: '',
-    employeeLevel: '',
-    employeeNotes: '',
+  const [isPositionFetchError, assignTo_isPositionFetchError] = useState<boolean>(true);
+  const [positionMSESI, assignTo_positionMSESI] = useState<PositionMaybeSansPositionSurrogateIDs>({
+    positionFirstName: '',
+    positionLastName: '',
+    positionNumber: '',
+    positionLevel: '',
+    positionNotes: '',
   });
 
   useEffect(() => {
-    fetch(dbmsUriBase() + '/employees/'+employeeSurrogateID)
+    fetch(dbmsUriBase() + '/positions/'+positionSurrogateID)
       .then((response) => {
         if (response.status === 200) {
-          assignTo_isEmployeeFetchError(false);
+          assignTo_isPositionFetchError(false);
           return response.json();
         }
         else {
-          assignTo_isEmployeeFetchError(true);
+          assignTo_isPositionFetchError(true);
         }
       })
       .then((data) => {
-        if (!isEmployee(data)) {
-          assignTo_isEmployeeFetchError(true);
+        if (!isPosition(data)) {
+          assignTo_isPositionFetchError(true);
         }
         else {
-          assignTo_employeeMSESI(data);
+          assignTo_positionMSESI(data);
         }
       })
       .catch((err) => {
-        assignTo_isEmployeeFetchError(true);
+        assignTo_isPositionFetchError(true);
         console.log(err.message);
       });
-  }, [employeeSurrogateID]);
+  }, [positionSurrogateID]);
 
-  if (isEmployeeFetchError) {
+  if (isPositionFetchError) {
     return (
-      <p>Failed to fetch employee.</p>
+      <p>Failed to fetch position.</p>
     )
   }
 
-  function handleEmployeeDeleteFormSubmit(event: React.FormEvent<HTMLFormElement>) {
+  function handlePositionDeleteFormSubmit(event: React.FormEvent<HTMLFormElement>) {
     // Prevent page from submitting.
     event.preventDefault();
-    console.log('delete button clicked with '+employeeSurrogateID);
-    fetch(dbmsUriBase() + '/employees/'+employeeSurrogateID+'/', {
+    console.log('delete button clicked with '+positionSurrogateID);
+    fetch(dbmsUriBase() + '/positions/'+positionSurrogateID+'/', {
         method: 'DELETE',
       })
       .then((response) => {
         if (response.status === 200) {
-          alert('Employee was deleted.');
+          alert('Position was deleted.');
         }
         else if (response.status === 400) {
           alert('Failed to save changes as bad client request; this shouldn\'t happen.');
         }
         else if (response.status === 404) {
-          alert('Failed to save changes as employee no longer in database.');
+          alert('Failed to save changes as position no longer in database.');
         }
         else {
           alert('Something else happened: '+response.status+' '+response.statusText);
         }
       })
       .catch((err) => {
-        alert('Failed to delete employee: ' + err.message
+        alert('Failed to delete position: ' + err.message
           + ' see console for details');
         console.log(err.message);
       });
@@ -528,18 +528,18 @@ function DeleteOneEmployeePage() {
 
   return (
     <>
-      <h2>Delete an Employee</h2>
-      <p><Link to={'/'}>Return</Link> to the employee listing page.</p>
-      <form onSubmit={handleEmployeeDeleteFormSubmit}>
+      <h2>Delete an Position</h2>
+      <p><Link to={'/'}>Return</Link> to the position listing page.</p>
+      <form onSubmit={handlePositionDeleteFormSubmit}>
         <table>
           <tbody>
             <tr>
-              <td>Employee Surrogate ID:</td>
-              <td>{employeeSurrogateID}</td>
+              <td>Position Surrogate ID:</td>
+              <td>{positionSurrogateID}</td>
             </tr>
-            <EmployeeFormFieldsSansEmployeeSurrogateIDs
-              employeeMSESI={employeeMSESI}
-              assignTo_employeeMSESI={assignTo_employeeMSESI}
+            <PositionFormFieldsSansPositionSurrogateIDs
+              positionMSESI={positionMSESI}
+              assignTo_positionMSESI={assignTo_positionMSESI}
               forDisplayOnly={true}
             />
             <tr>
@@ -558,10 +558,10 @@ function App() {
     <BrowserRouter>
       <h1>Province of British Columbia - Staff Directory (BCSD)</h1>
       <Routes>
-        <Route path="/create" element={<CreateOneEmployeePage />} />
-        <Route path="/" element={<ViewAllEmployeesPage />} />
-        <Route path="/edit/:employeeSurrogateID" element={<EditOneEmployeePage />} />
-        <Route path="/delete/:employeeSurrogateID" element={<DeleteOneEmployeePage />} />
+        <Route path="/create" element={<CreateOnePositionPage />} />
+        <Route path="/" element={<ViewAllPositionsPage />} />
+        <Route path="/edit/:positionSurrogateID" element={<EditOnePositionPage />} />
+        <Route path="/delete/:positionSurrogateID" element={<DeleteOnePositionPage />} />
       </Routes>
     </BrowserRouter>
   );

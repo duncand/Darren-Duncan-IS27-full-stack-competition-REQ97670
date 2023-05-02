@@ -3,13 +3,13 @@ import { ConfigModule } from '@nestjs/config';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { EmployeesModule } from './employees/employees.module';
+import { PositionsModule } from './positions/positions.module';
 import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    EmployeesModule,
+    PositionsModule,
     HealthModule,
   ],
   controllers: [AppController],

@@ -1,13 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateEmployeeDto {
+export class CreatePositionDto {
   @ApiProperty({
     type: String,
     minLength: 1,
     required: true,
     example: 'John',
   })
-  employeeFirstName: string;
+  positionFirstName: string;
 
   @ApiProperty({
     type: String,
@@ -15,7 +15,7 @@ export class CreateEmployeeDto {
     required: true,
     example: 'Doe',
   })
-  employeeLastName: string;
+  positionLastName: string;
 
   @ApiProperty({
     type: String,
@@ -23,7 +23,7 @@ export class CreateEmployeeDto {
     required: true,
     example: '703',
   })
-  employeeNumber: string;
+  positionNumber: string;
 
   @ApiProperty({
     type: String,
@@ -31,7 +31,7 @@ export class CreateEmployeeDto {
     required: true,
     example: 'manager',
   })
-  employeeLevel: string;
+  positionLevel: string;
 
   @ApiProperty({
     type: String,
@@ -39,5 +39,5 @@ export class CreateEmployeeDto {
     required: true,
     example: 'Good work guy.',
   })
-  employeeNotes: string;
+  positionNotes: string;
 }

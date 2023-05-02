@@ -23,7 +23,7 @@ export class HealthController {
     const host = process.env.HOST || '127.0.0.1';
     const port = process.env.PORT || 80;
     return this.health.check([
-      () => this.http.pingCheck('/api/employees', 'http://'+host+':'+port+'/api/employees'),
+      () => this.http.pingCheck('/api/positions', 'http://'+host+':'+port+'/api/positions'),
     ]);
   }
 }

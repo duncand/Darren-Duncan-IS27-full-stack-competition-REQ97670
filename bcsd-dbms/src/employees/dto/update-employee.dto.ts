@@ -1,21 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class UpdateEmployeeDto {
+export class UpdatePositionDto {
   @ApiProperty({
     type: String,
     minLength: 1,
     required: true,
     example: '12345',
   })
-  employeeSurrogateID: string;
+  positionSurrogateID: string;
 
   // The remaining properties below this line are exact clones of those
-  // declared in CreateEmployeeDto.  An earlier version of this class
+  // declared in CreatePositionDto.  An earlier version of this class
   // instead had these:
   //   import { PartialType } from '@nestjs/mapped-types';
-  //   export class UpdateEmployeeDto extends PartialType(CreateEmployeeDto)
+  //   export class UpdatePositionDto extends PartialType(CreatePositionDto)
   // However, this was changed to the current method so that Swagger can
-  // properly pick up on all the members of UpdateEmployeeDto.
+  // properly pick up on all the members of UpdatePositionDto.
 
   @ApiProperty({
     type: String,
@@ -23,7 +23,7 @@ export class UpdateEmployeeDto {
     required: true,
     example: 'John',
   })
-  employeeFirstName: string;
+  positionFirstName: string;
 
   @ApiProperty({
     type: String,
@@ -31,7 +31,7 @@ export class UpdateEmployeeDto {
     required: true,
     example: 'Doe',
   })
-  employeeLastName: string;
+  positionLastName: string;
 
   @ApiProperty({
     type: String,
@@ -39,7 +39,7 @@ export class UpdateEmployeeDto {
     required: true,
     example: '703',
   })
-  employeeNumber: string;
+  positionNumber: string;
 
   @ApiProperty({
     type: String,
@@ -47,7 +47,7 @@ export class UpdateEmployeeDto {
     required: true,
     example: 'manager',
   })
-  employeeLevel: string;
+  positionLevel: string;
 
   @ApiProperty({
     type: String,
@@ -55,5 +55,5 @@ export class UpdateEmployeeDto {
     required: true,
     example: 'Good work guy.',
   })
-  employeeNotes: string;
+  positionNotes: string;
 }

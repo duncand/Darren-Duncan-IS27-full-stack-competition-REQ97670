@@ -6,19 +6,19 @@ import {
 import { ConfigService } from '@nestjs/config';
 import * as fs from 'fs';
 
-import { CreateEmployeeDto } from './dto/create-employee.dto';
-import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import { CreatePositionDto } from './dto/create-position.dto';
+import { UpdatePositionDto } from './dto/update-position.dto';
 import {
-  allEmployeeSurrogateIDsAreDistinct,
+  allPositionSurrogateIDsAreDistinct,
   allLevelLimitsAreRespected,
-  isArrayOfEmployee,
+  isArrayOfPosition,
   isNonEmptyString,
-  isEmployee,
-  isEmployeeSansEmployeeSurrogateIDs,
+  isPosition,
+  isPositionSansPositionSurrogateIDs,
 } from '../app-types';
 
 @Injectable()
-export class EmployeesService {
+export class PositionsService {
   // This is the file system path of the JSON file we will use as our database.
   // We require that file to already exist and be readable and writable.
   // We require the user to specify this path so they have full control
@@ -40,17 +40,17 @@ export class EmployeesService {
         'Environment variable DATA_FILE_PATH must be a non-empty string.');
     }
     this.dataFilePath = (maybeDataFilePath ?? '').trim();
-    console.log('EmployeesService.constructor():'
+    console.log('PositionsService.constructor():'
       + ' DATA_FILE_PATH is "' + this.dataFilePath + '"');
   }
 
-  private readDataFile(): Array<UpdateEmployeeDto> {
+  private readDataFile(): Array<UpdatePositionDto> {
     var dataFileAsText;
     try {
       dataFileAsText = fs.readFileSync(this.dataFilePath, 'utf8');
     }
     catch (e) {
-      console.log('EmployeesService.readDataFile():'
+      console.log('PositionsService.readDataFile():'
         + ' failure to read data file as text from "' + this.dataFilePath + '"');
       // This should result in a generic 500 API response.
       throw e;
@@ -60,29 +60,29 @@ export class EmployeesService {
       dataFileAsAny = JSON.parse(dataFileAsText);
     }
     catch (e) {
-      console.log('EmployeesService.readDataFile():'
+      console.log('PositionsService.readDataFile():'
         + ' failure to parse data file text as JSON from "' + this.dataFilePath + '"');
       // This should result in a generic 500 API response.
       throw e;
     }
-    if (!isArrayOfEmployee(dataFileAsAny)) {
-      const msg: string = 'EmployeesService.readDataFile():'
-        + ' data file is not Array of Employee from "' + this.dataFilePath + '"';
+    if (!isArrayOfPosition(dataFileAsAny)) {
+      const msg: string = 'PositionsService.readDataFile():'
+        + ' data file is not Array of Position from "' + this.dataFilePath + '"';
       console.log(msg);
       // This should result in a generic 500 API response.
       throw new Error(msg);
     }
-    if (!allEmployeeSurrogateIDsAreDistinct(dataFileAsAny)) {
-      const msg: string = 'EmployeesService.readDataFile():'
-        + ' data file Employees not all distinct employeeSurrogateIDs'
+    if (!allPositionSurrogateIDsAreDistinct(dataFileAsAny)) {
+      const msg: string = 'PositionsService.readDataFile():'
+        + ' data file Positions not all distinct positionSurrogateIDs'
         + ' from "' + this.dataFilePath + '"';
       console.log(msg);
       // This should result in a generic 500 API response.
       throw new Error(msg);
     }
     if (!allLevelLimitsAreRespected(dataFileAsAny)) {
-      const msg: string = 'EmployeesService.readDataFile():'
-        + ' data file Employees exceed limits on an employeeLevel'
+      const msg: string = 'PositionsService.readDataFile():'
+        + ' data file Positions exceed limits on an positionLevel'
         + ' from "' + this.dataFilePath + '"';
       console.log(msg);
       // This should result in a generic 500 API response.
@@ -91,14 +91,14 @@ export class EmployeesService {
     return dataFileAsAny;
   }
 
-  private writeDataFile(employees: Array<UpdateEmployeeDto>): void {
+  private writeDataFile(positions: Array<UpdatePositionDto>): void {
     var dataFileAsText;
     try {
       // Serialize pretty-printed with indentations of 2 spaces per level.
-      dataFileAsText = JSON.stringify(employees, null, 2);
+      dataFileAsText = JSON.stringify(positions, null, 2);
     }
     catch (e) {
-      console.log('EmployeesService.readDataFile():'
+      console.log('PositionsService.readDataFile():'
         + ' failure to serialize data file text as JSON to "' + this.dataFilePath + '"');
       // This should result in a generic 500 API response.
       throw e;
@@ -107,126 +107,126 @@ export class EmployeesService {
       fs.writeFileSync(this.dataFilePath, dataFileAsText, 'utf8');
     }
     catch (e) {
-      console.log('EmployeesService.readDataFile():'
+      console.log('PositionsService.readDataFile():'
         + ' failure to write data file as text to "' + this.dataFilePath + '"');
       // This should result in a generic 500 API response.
       throw e;
     }
   }
 
-  private maybeIndexOfMatchingEmployee(
-      employees: Array<UpdateEmployeeDto>, employeeSurrogateID: string)
+  private maybeIndexOfMatchingPosition(
+      positions: Array<UpdatePositionDto>, positionSurrogateID: string)
       : number {
-    return employees.findIndex((elem) => elem.employeeSurrogateID === employeeSurrogateID);
+    return positions.findIndex((elem) => elem.positionSurrogateID === positionSurrogateID);
   }
 
-  private employeeAtIndex(employees: Array<UpdateEmployeeDto>, index: number)
-      : UpdateEmployeeDto {
-    // We assume employeeAtIndex() is called exclusively on inputs
-    // for which maybeIndexOfMatchingEmployee() had a successful find.
-    // The "?? new UpdateEmployeeDto()" is only here because strict
+  private positionAtIndex(positions: Array<UpdatePositionDto>, index: number)
+      : UpdatePositionDto {
+    // We assume positionAtIndex() is called exclusively on inputs
+    // for which maybeIndexOfMatchingPosition() had a successful find.
+    // The "?? new UpdatePositionDto()" is only here because strict
     // TypeScript would complain about trying to assign X|undefined to X.
-    return employees.at(index) ?? new UpdateEmployeeDto();
+    return positions.at(index) ?? new UpdatePositionDto();
   }
 
-  private generateDistinctEmployeeSurrogateID(employees: Array<UpdateEmployeeDto>): string {
+  private generateDistinctPositionSurrogateID(positions: Array<UpdatePositionDto>): string {
     // We will use a simple generator algorithm, that takes the rounded
     // result of multiplying the current UNIX timestamp in milliseconds
     // by a pseudo-random number, then modulo 2^16 so its easier to read,
-    // to generate an employeeSurrogateID.
+    // to generate an positionSurrogateID.
     // As a guard for the tiny possibility of a collision with
-    // an existing employeeSurrogateID, in the event of a collision we will
+    // an existing positionSurrogateID, in the event of a collision we will
     // append an "x" repeatedly until there isn't a collision.
-    var employeeSurrogateID: string
+    var positionSurrogateID: string
       = (Math.floor(Date.now() * Math.random()) % (2**16)).toString();
-    while (this.maybeIndexOfMatchingEmployee(employees, employeeSurrogateID) !== -1) {
-      employeeSurrogateID = employeeSurrogateID + 'x';
+    while (this.maybeIndexOfMatchingPosition(positions, positionSurrogateID) !== -1) {
+      positionSurrogateID = positionSurrogateID + 'x';
     }
-    return employeeSurrogateID;
+    return positionSurrogateID;
   }
 
-  createOne(createEmployeeDto: CreateEmployeeDto) {
-    if (!isEmployeeSansEmployeeSurrogateIDs(createEmployeeDto)) {
+  createOne(createPositionDto: CreatePositionDto) {
+    if (!isPositionSansPositionSurrogateIDs(createPositionDto)) {
       throw new BadRequestException(
-        "request body doesn't match the format of a Employee sans employeeSurrogateID");
+        "request body doesn't match the format of a Position sans positionSurrogateID");
     }
-    const employees: Array<UpdateEmployeeDto> = this.readDataFile();
-    const employee: UpdateEmployeeDto = {
-      "employeeSurrogateID": this.generateDistinctEmployeeSurrogateID(employees),
-      "employeeFirstName": createEmployeeDto.employeeFirstName,
-      "employeeLastName": createEmployeeDto.employeeLastName,
-      "employeeNumber": createEmployeeDto.employeeNumber,
-      "employeeLevel": createEmployeeDto.employeeLevel,
-      "employeeNotes": createEmployeeDto.employeeNotes,
+    const positions: Array<UpdatePositionDto> = this.readDataFile();
+    const position: UpdatePositionDto = {
+      "positionSurrogateID": this.generateDistinctPositionSurrogateID(positions),
+      "positionFirstName": createPositionDto.positionFirstName,
+      "positionLastName": createPositionDto.positionLastName,
+      "positionNumber": createPositionDto.positionNumber,
+      "positionLevel": createPositionDto.positionLevel,
+      "positionNotes": createPositionDto.positionNotes,
     };
-    employees.push(employee);
-    if (!allLevelLimitsAreRespected(employees)) {
+    positions.push(position);
+    if (!allLevelLimitsAreRespected(positions)) {
       throw new BadRequestException(
-        "too many employees with this employeeLevel");
+        "too many positions with this positionLevel");
     }
-    this.writeDataFile(employees);
+    this.writeDataFile(positions);
   }
 
-  fetchAll(): Array<UpdateEmployeeDto> {
+  fetchAll(): Array<UpdatePositionDto> {
     return this.readDataFile();
   }
 
-  fetchOne(employeeSurrogateID: string): UpdateEmployeeDto {
-    if (!isNonEmptyString(employeeSurrogateID)) {
+  fetchOne(positionSurrogateID: string): UpdatePositionDto {
+    if (!isNonEmptyString(positionSurrogateID)) {
       throw new BadRequestException(
-        "employeeSurrogateID (ignoring spaces) isn't a non-empty string");
+        "positionSurrogateID (ignoring spaces) isn't a non-empty string");
     }
-    const employees: Array<UpdateEmployeeDto> = this.readDataFile();
-    const maybeIndexOfMatchingEmployee
-      = this.maybeIndexOfMatchingEmployee(employees, employeeSurrogateID);
-    if (maybeIndexOfMatchingEmployee === -1) {
+    const positions: Array<UpdatePositionDto> = this.readDataFile();
+    const maybeIndexOfMatchingPosition
+      = this.maybeIndexOfMatchingPosition(positions, positionSurrogateID);
+    if (maybeIndexOfMatchingPosition === -1) {
       throw new NotFoundException(
-        "no Employee found matching given employeeSurrogateID");
+        "no Position found matching given positionSurrogateID");
     }
-    return this.employeeAtIndex(employees, maybeIndexOfMatchingEmployee);
+    return this.positionAtIndex(positions, maybeIndexOfMatchingPosition);
   }
 
-  updateOne(employeeSurrogateID: string, updateEmployeeDto: UpdateEmployeeDto) {
-    if (!isNonEmptyString(employeeSurrogateID)) {
+  updateOne(positionSurrogateID: string, updatePositionDto: UpdatePositionDto) {
+    if (!isNonEmptyString(positionSurrogateID)) {
       throw new BadRequestException(
-        "employeeSurrogateID (ignoring spaces) isn't a non-empty string");
+        "positionSurrogateID (ignoring spaces) isn't a non-empty string");
     }
-    if (!isEmployee(updateEmployeeDto)) {
+    if (!isPosition(updatePositionDto)) {
       throw new BadRequestException(
-        "request body doesn't match the format of a Employee");
+        "request body doesn't match the format of a Position");
     }
-    if (updateEmployeeDto.employeeSurrogateID !== employeeSurrogateID) {
+    if (updatePositionDto.positionSurrogateID !== positionSurrogateID) {
       throw new BadRequestException(
-        "employeeSurrogateIDs in url and request body don't match");
+        "positionSurrogateIDs in url and request body don't match");
     }
-    const employees: Array<UpdateEmployeeDto> = this.readDataFile();
-    const maybeIndexOfMatchingEmployee
-      = this.maybeIndexOfMatchingEmployee(employees, employeeSurrogateID);
-    if (maybeIndexOfMatchingEmployee === -1) {
+    const positions: Array<UpdatePositionDto> = this.readDataFile();
+    const maybeIndexOfMatchingPosition
+      = this.maybeIndexOfMatchingPosition(positions, positionSurrogateID);
+    if (maybeIndexOfMatchingPosition === -1) {
       throw new NotFoundException(
-        "no Employee found matching given employeeSurrogateID");
+        "no Position found matching given positionSurrogateID");
     }
-    employees.splice(maybeIndexOfMatchingEmployee, 1, updateEmployeeDto);
-    if (!allLevelLimitsAreRespected(employees)) {
+    positions.splice(maybeIndexOfMatchingPosition, 1, updatePositionDto);
+    if (!allLevelLimitsAreRespected(positions)) {
       throw new BadRequestException(
-        "too many employees with this employeeLevel");
+        "too many positions with this positionLevel");
     }
-    this.writeDataFile(employees);
+    this.writeDataFile(positions);
   }
 
-  removeOne(employeeSurrogateID: string) {
-    if (!isNonEmptyString(employeeSurrogateID)) {
+  removeOne(positionSurrogateID: string) {
+    if (!isNonEmptyString(positionSurrogateID)) {
       throw new BadRequestException(
-        "employeeSurrogateID (ignoring spaces) isn't a non-empty string");
+        "positionSurrogateID (ignoring spaces) isn't a non-empty string");
     }
-    const employees: Array<UpdateEmployeeDto> = this.readDataFile();
-    const maybeIndexOfMatchingEmployee
-      = this.maybeIndexOfMatchingEmployee(employees, employeeSurrogateID);
-    if (maybeIndexOfMatchingEmployee === -1) {
+    const positions: Array<UpdatePositionDto> = this.readDataFile();
+    const maybeIndexOfMatchingPosition
+      = this.maybeIndexOfMatchingPosition(positions, positionSurrogateID);
+    if (maybeIndexOfMatchingPosition === -1) {
       throw new NotFoundException(
-        "no Employee found matching given employeeSurrogateID");
+        "no Position found matching given positionSurrogateID");
     }
-    employees.splice(maybeIndexOfMatchingEmployee, 1);
-    this.writeDataFile(employees);
+    positions.splice(maybeIndexOfMatchingPosition, 1);
+    this.writeDataFile(positions);
   }
 }

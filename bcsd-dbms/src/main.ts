@@ -15,7 +15,7 @@ async function bootstrap() {
   const port = process.env.PORT || 80;
 
   // Assign global url path prefix to all endpoints.
-  // So then otherwise-unqalified "employees" is under /api/employees and so on.
+  // So then otherwise-unqalified "positions" is under /api/positions and so on.
   app.setGlobalPrefix('/api');
 
   // Widening the allowed origins from the default is required in order for

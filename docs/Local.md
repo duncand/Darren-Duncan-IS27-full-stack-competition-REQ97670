@@ -107,7 +107,7 @@ shell output; the server will not quit, but it will not work properly.
 The actual specified data file doesn't need to exist until the actual times
 that API invocations are made of the server.  The server will re-read the
 file for every API call, and validate that it is present and is a well
-formed set of employee records, and the API will return a 500 response if it
+formed set of position records, and the API will return a 500 response if it
 isn't without attempting to alter or create the file.  Assuming it is
 valid, and the API invocation is also valid, any API invocation that is
 a create/modify/remove request will rewrite the file.  You can manually

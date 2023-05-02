@@ -9,96 +9,96 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { EmployeesService } from './employees.service';
-import { CreateEmployeeDto } from './dto/create-employee.dto';
-import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import { PositionsService } from './positions.service';
+import { CreatePositionDto } from './dto/create-position.dto';
+import { UpdatePositionDto } from './dto/update-position.dto';
 
-@Controller('employees')
-@ApiTags('employees')
-export class EmployeesController {
-  constructor(private readonly employeesService: EmployeesService) {}
+@Controller('positions')
+@ApiTags('positions')
+export class PositionsController {
+  constructor(private readonly positionsService: PositionsService) {}
 
   @Post()
   @ApiOperation({
-    summary: 'Create a new Employee with a generated employeeSurrogateID'
+    summary: 'Create a new Position with a generated positionSurrogateID'
   })
   @ApiCreatedResponse({
-    description: 'Created a new Employee with a generated employeeSurrogateID',
+    description: 'Created a new Position with a generated positionSurrogateID',
   })
   @ApiBadRequestResponse({
     description: 'Given request body is not of a valid format'
-      + " or too many employees have this one's employeeLevel"
+      + " or too many positions have this one's positionLevel"
   })
-  createOne(@Body() createEmployeeDto: CreateEmployeeDto) {
-    return this.employeesService.createOne(createEmployeeDto);
+  createOne(@Body() createPositionDto: CreatePositionDto) {
+    return this.positionsService.createOne(createPositionDto);
   }
 
   @Get()
   @ApiOperation({
-    summary: 'Fetch a list of all existing Employees'
+    summary: 'Fetch a list of all existing Positions'
   })
   @ApiOkResponse({
-    description: 'Fetched a list of all existing Employees',
+    description: 'Fetched a list of all existing Positions',
   })
   fetchAll() {
-    return this.employeesService.fetchAll();
+    return this.positionsService.fetchAll();
   }
 
-  @Get(':employeeSurrogateID')
-  @ApiParam({ name: 'employeeSurrogateID', type: String, required: true })
+  @Get(':positionSurrogateID')
+  @ApiParam({ name: 'positionSurrogateID', type: String, required: true })
   @ApiOperation({
-    summary: 'Fetch an existing Employee matching given employeeSurrogateID'
+    summary: 'Fetch an existing Position matching given positionSurrogateID'
   })
   @ApiOkResponse({
-    description: 'Fetched an existing Employee matching given employeeSurrogateID'
+    description: 'Fetched an existing Position matching given positionSurrogateID'
   })
   @ApiBadRequestResponse({
-    description: 'Given employeeSurrogateID is not of a valid format'
+    description: 'Given positionSurrogateID is not of a valid format'
   })
   @ApiNotFoundResponse({
-    description: 'No Employee found matching given employeeSurrogateID'
+    description: 'No Position found matching given positionSurrogateID'
   })
-  fetchOne(@Param('employeeSurrogateID') employeeSurrogateID: string): UpdateEmployeeDto {
-    return this.employeesService.fetchOne(decodeURIComponent(employeeSurrogateID));
+  fetchOne(@Param('positionSurrogateID') positionSurrogateID: string): UpdatePositionDto {
+    return this.positionsService.fetchOne(decodeURIComponent(positionSurrogateID));
   }
 
-  @Put(':employeeSurrogateID')
-  @ApiParam({ name: 'employeeSurrogateID', type: String, required: true })
+  @Put(':positionSurrogateID')
+  @ApiParam({ name: 'positionSurrogateID', type: String, required: true })
   @ApiOperation({
-    summary: 'Update an existing Employee matching given employeeSurrogateID'
+    summary: 'Update an existing Position matching given positionSurrogateID'
   })
   @ApiOkResponse({
-    description: 'Updated an existing Employee matching given employeeSurrogateID'
+    description: 'Updated an existing Position matching given positionSurrogateID'
   })
   @ApiBadRequestResponse({
-    description: 'Given employeeSurrogateID or request body is not of a valid format'
-      + " or employeeSurrogateIDs in url and body don't match"
-      + " or too many employees have this one's employeeLevel"
+    description: 'Given positionSurrogateID or request body is not of a valid format'
+      + " or positionSurrogateIDs in url and body don't match"
+      + " or too many positions have this one's positionLevel"
   })
   @ApiNotFoundResponse({
-    description: 'No Employee found matching given employeeSurrogateID'
+    description: 'No Position found matching given positionSurrogateID'
   })
-  updateOne(@Param('employeeSurrogateID') employeeSurrogateID: string,
-      @Body() updateEmployeeDto: UpdateEmployeeDto) {
-    return this.employeesService.updateOne(
-      decodeURIComponent(employeeSurrogateID), updateEmployeeDto);
+  updateOne(@Param('positionSurrogateID') positionSurrogateID: string,
+      @Body() updatePositionDto: UpdatePositionDto) {
+    return this.positionsService.updateOne(
+      decodeURIComponent(positionSurrogateID), updatePositionDto);
   }
 
-  @Delete(':employeeSurrogateID')
-  @ApiParam({ name: 'employeeSurrogateID', type: String, required: true })
+  @Delete(':positionSurrogateID')
+  @ApiParam({ name: 'positionSurrogateID', type: String, required: true })
   @ApiOperation({
-    summary: 'Remove an existing Employee matching given employeeSurrogateID'
+    summary: 'Remove an existing Position matching given positionSurrogateID'
   })
   @ApiOkResponse({
-    description: 'Removed an existing Employee matching given employeeSurrogateID'
+    description: 'Removed an existing Position matching given positionSurrogateID'
   })
   @ApiBadRequestResponse({
-    description: 'Given employeeSurrogateID is not of a valid format'
+    description: 'Given positionSurrogateID is not of a valid format'
   })
   @ApiNotFoundResponse({
-    description: 'No Employee found matching given employeeSurrogateID'
+    description: 'No Position found matching given positionSurrogateID'
   })
-  removeOne(@Param('employeeSurrogateID') employeeSurrogateID: string) {
-    return this.employeesService.removeOne(decodeURIComponent(employeeSurrogateID));
+  removeOne(@Param('positionSurrogateID') positionSurrogateID: string) {
+    return this.positionsService.removeOne(decodeURIComponent(positionSurrogateID));
   }
 }
