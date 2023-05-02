@@ -24,8 +24,8 @@ import './App.css';
 // even if the empty array is necessary to avoid infinite useEffect() calls.
 
 interface PositionCEDProps {
-  positionMSESI: PositionMaybeSansPositionSurrogateIDs;
-  assignTo_positionMSESI: (x: PositionMaybeSansPositionSurrogateIDs) => void;
+  positionMSPSI: PositionMaybeSansPositionSurrogateIDs;
+  assignTo_positionMSPSI: (x: PositionMaybeSansPositionSurrogateIDs) => void;
   forDisplayOnly: boolean;
 }
 
@@ -60,11 +60,11 @@ function DisplayOfOneLevel({ levelCode, positions }: DisplayOfOneLevelProps) {
       <th></th>
       <th></th>
       <th>Position Surrogate ID</th>
-      <th>Position First Name</th>
-      <th>Position Last Name</th>
+      <th>Employee First Name</th>
+      <th>Employee Last Name</th>
       <th>Position Number</th>
       <th>Position Level</th>
-      <th>Position Notes</th>
+      <th>Position Title</th>
     </tr>
   );
 
@@ -73,11 +73,11 @@ function DisplayOfOneLevel({ levelCode, positions }: DisplayOfOneLevelProps) {
       <td><Link to={'/edit/' + position.positionSurrogateID}>Edit</Link></td>
       <td><Link to={'/delete/' + position.positionSurrogateID}>Delete</Link></td>
       <td>{position.positionSurrogateID}</td>
-      <td>{position.positionFirstName}</td>
-      <td>{position.positionLastName}</td>
+      <td>{position.employeeFirstName}</td>
+      <td>{position.employeeLastName}</td>
       <td>{position.positionNumber}</td>
       <td>{position.positionLevel}</td>
-      <td>{position.positionNotes}</td>
+      <td>{position.positionTitle}</td>
     </tr>
   );
 
@@ -178,8 +178,8 @@ function ViewAllPositionsPage() {
 
 function PositionFormFieldsSansPositionSurrogateIDs(
     {
-      positionMSESI,
-      assignTo_positionMSESI,
+      positionMSPSI,
+      assignTo_positionMSPSI,
       forDisplayOnly,
     }: PositionCEDProps) {
 
@@ -187,24 +187,24 @@ function PositionFormFieldsSansPositionSurrogateIDs(
     return (
       <>
         <tr>
-          <td>Position First Name:</td>
-          <td>{positionMSESI.positionFirstName}</td>
+          <td>Employee First Name:</td>
+          <td>{positionMSPSI.employeeFirstName}</td>
         </tr>
         <tr>
-          <td>Position Last Name:</td>
-          <td>{positionMSESI.positionLastName}</td>
+          <td>Employee Last Name:</td>
+          <td>{positionMSPSI.employeeLastName}</td>
         </tr>
         <tr>
           <td>Position Number:</td>
-          <td>{positionMSESI.positionNumber}</td>
+          <td>{positionMSPSI.positionNumber}</td>
         </tr>
         <tr>
           <td>Position Level:</td>
-          <td>{positionMSESI.positionLevel}</td>
+          <td>{positionMSPSI.positionLevel}</td>
         </tr>
         <tr>
-          <td>Position Notes:</td>
-          <td>{positionMSESI.positionNotes}</td>
+          <td>Position Title:</td>
+          <td>{positionMSPSI.positionTitle}</td>
         </tr>
       </>
     );
@@ -213,23 +213,23 @@ function PositionFormFieldsSansPositionSurrogateIDs(
   return (
     <>
       <tr>
-        <td>Position First Name:</td>
+        <td>Employee First Name:</td>
         <td><input
           type="text"
-          id="positionFirstName"
-          name="positionFirstName"
-          value={positionMSESI.positionFirstName}
-          onChange={(e) => assignTo_positionMSESI({ ...positionMSESI, positionFirstName: e.target.value })}
+          id="employeeFirstName"
+          name="employeeFirstName"
+          value={positionMSPSI.employeeFirstName}
+          onChange={(e) => assignTo_positionMSPSI({ ...positionMSPSI, employeeFirstName: e.target.value })}
           /></td>
       </tr>
       <tr>
-        <td>Position Last Name:</td>
+        <td>Employee Last Name:</td>
         <td><input
           type="text"
-          id="positionLastName"
-          name="positionLastName"
-          value={positionMSESI.positionLastName}
-          onChange={(e) => assignTo_positionMSESI({ ...positionMSESI, positionLastName: e.target.value })}
+          id="employeeLastName"
+          name="employeeLastName"
+          value={positionMSPSI.employeeLastName}
+          onChange={(e) => assignTo_positionMSPSI({ ...positionMSPSI, employeeLastName: e.target.value })}
           /></td>
       </tr>
       <tr>
@@ -238,8 +238,8 @@ function PositionFormFieldsSansPositionSurrogateIDs(
           type="text"
           id="positionNumber"
           name="positionNumber"
-          value={positionMSESI.positionNumber}
-          onChange={(e) => assignTo_positionMSESI({ ...positionMSESI, positionNumber: e.target.value })}
+          value={positionMSPSI.positionNumber}
+          onChange={(e) => assignTo_positionMSPSI({ ...positionMSPSI, positionNumber: e.target.value })}
           /></td>
       </tr>
       <tr>
@@ -248,18 +248,18 @@ function PositionFormFieldsSansPositionSurrogateIDs(
           type="text"
           id="positionLevel"
           name="positionLevel"
-          value={positionMSESI.positionLevel}
-          onChange={(e) => assignTo_positionMSESI({ ...positionMSESI, positionLevel: e.target.value })}
+          value={positionMSPSI.positionLevel}
+          onChange={(e) => assignTo_positionMSPSI({ ...positionMSPSI, positionLevel: e.target.value })}
           /></td>
       </tr>
       <tr>
-        <td>Position Notes:</td>
+        <td>Position Title:</td>
         <td><input
           type="text"
-          id="positionNotes"
-          name="positionNotes"
-          value={positionMSESI.positionNotes}
-          onChange={(e) => assignTo_positionMSESI({ ...positionMSESI, positionNotes: e.target.value })}
+          id="positionTitle"
+          name="positionTitle"
+          value={positionMSPSI.positionTitle}
+          onChange={(e) => assignTo_positionMSPSI({ ...positionMSPSI, positionTitle: e.target.value })}
           /></td>
       </tr>
     </>
@@ -267,37 +267,37 @@ function PositionFormFieldsSansPositionSurrogateIDs(
 }
 
 function normalizedPositionSansPositionSurrogateIDs(
-    positionMSESI: PositionMaybeSansPositionSurrogateIDs): PositionMaybeSansPositionSurrogateIDs {
+    positionMSPSI: PositionMaybeSansPositionSurrogateIDs): PositionMaybeSansPositionSurrogateIDs {
   return {
-    positionFirstName: positionMSESI.positionFirstName.trim(),
-    positionLastName: positionMSESI.positionLastName.trim(),
-    positionNumber: positionMSESI.positionNumber.trim(),
-    positionLevel: positionMSESI.positionLevel.trim(),
-    positionNotes: positionMSESI.positionNotes.trim(),
+    employeeFirstName: positionMSPSI.employeeFirstName.trim(),
+    employeeLastName: positionMSPSI.employeeLastName.trim(),
+    positionNumber: positionMSPSI.positionNumber.trim(),
+    positionLevel: positionMSPSI.positionLevel.trim(),
+    positionTitle: positionMSPSI.positionTitle.trim(),
   };
 }
 
 function CreateOnePositionPage() {
-  const [positionMSESI, assignTo_positionMSESI] = useState<PositionMaybeSansPositionSurrogateIDs>({
-    positionFirstName: '',
-    positionLastName: '',
+  const [positionMSPSI, assignTo_positionMSPSI] = useState<PositionMaybeSansPositionSurrogateIDs>({
+    employeeFirstName: '',
+    employeeLastName: '',
     positionNumber: '',
     positionLevel: '',
-    positionNotes: '',
+    positionTitle: '',
   });
 
   function handlePositionCreateFormSubmit(event: React.FormEvent<HTMLFormElement>) {
     // Prevent page from submitting.
     event.preventDefault();
-    const normProdMSESI = normalizedPositionSansPositionSurrogateIDs(positionMSESI);
-    console.log('save button clicked with '+JSON.stringify(normProdMSESI));
-    if (!isPositionSansPositionSurrogateIDs(normProdMSESI)) {
+    const normProdMSPSI = normalizedPositionSansPositionSurrogateIDs(positionMSPSI);
+    console.log('save button clicked with '+JSON.stringify(normProdMSPSI));
+    if (!isPositionSansPositionSurrogateIDs(normProdMSPSI)) {
       alert('Every field must be non-empty to save changes.');
       return;
     }
     fetch(dbmsUriBase() + '/positions/', {
         method: 'POST',
-        body: JSON.stringify(normalizedPositionSansPositionSurrogateIDs(normProdMSESI)),
+        body: JSON.stringify(normalizedPositionSansPositionSurrogateIDs(normProdMSPSI)),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
         },
@@ -332,8 +332,8 @@ function CreateOnePositionPage() {
               <td>(Will be generated.)</td>
             </tr>
             <PositionFormFieldsSansPositionSurrogateIDs
-              positionMSESI={positionMSESI}
-              assignTo_positionMSESI={assignTo_positionMSESI}
+              positionMSPSI={positionMSPSI}
+              assignTo_positionMSPSI={assignTo_positionMSPSI}
               forDisplayOnly={false}
             />
             <tr>
@@ -351,12 +351,12 @@ function EditOnePositionPage() {
   const { positionSurrogateID } = useParams();
 
   const [isPositionFetchError, assignTo_isPositionFetchError] = useState<boolean>(true);
-  const [positionMSESI, assignTo_positionMSESI] = useState<PositionMaybeSansPositionSurrogateIDs>({
-    positionFirstName: '',
-    positionLastName: '',
+  const [positionMSPSI, assignTo_positionMSPSI] = useState<PositionMaybeSansPositionSurrogateIDs>({
+    employeeFirstName: '',
+    employeeLastName: '',
     positionNumber: '',
     positionLevel: '',
-    positionNotes: '',
+    positionTitle: '',
   });
 
   useEffect(() => {
@@ -375,7 +375,7 @@ function EditOnePositionPage() {
           assignTo_isPositionFetchError(true);
         }
         else {
-          assignTo_positionMSESI(data);
+          assignTo_positionMSPSI(data);
         }
       })
       .catch((err) => {
@@ -393,8 +393,8 @@ function EditOnePositionPage() {
   function handlePositionEditFormSubmit(event: React.FormEvent<HTMLFormElement>) {
     // Prevent page from submitting.
     event.preventDefault();
-    const normProdMSESI = normalizedPositionSansPositionSurrogateIDs(positionMSESI);
-    const position: Position = { ...normProdMSESI, positionSurrogateID: positionSurrogateID || '' };
+    const normProdMSPSI = normalizedPositionSansPositionSurrogateIDs(positionMSPSI);
+    const position: Position = { ...normProdMSPSI, positionSurrogateID: positionSurrogateID || '' };
     console.log('save button clicked with '+JSON.stringify(position));
     if (!isPosition(position)) {
       alert('Every field must be non-empty to save changes.');
@@ -440,8 +440,8 @@ function EditOnePositionPage() {
               <td>{positionSurrogateID}</td>
             </tr>
             <PositionFormFieldsSansPositionSurrogateIDs
-              positionMSESI={positionMSESI}
-              assignTo_positionMSESI={assignTo_positionMSESI}
+              positionMSPSI={positionMSPSI}
+              assignTo_positionMSPSI={assignTo_positionMSPSI}
               forDisplayOnly={false}
             />
             <tr>
@@ -459,12 +459,12 @@ function DeleteOnePositionPage() {
   const { positionSurrogateID } = useParams();
 
   const [isPositionFetchError, assignTo_isPositionFetchError] = useState<boolean>(true);
-  const [positionMSESI, assignTo_positionMSESI] = useState<PositionMaybeSansPositionSurrogateIDs>({
-    positionFirstName: '',
-    positionLastName: '',
+  const [positionMSPSI, assignTo_positionMSPSI] = useState<PositionMaybeSansPositionSurrogateIDs>({
+    employeeFirstName: '',
+    employeeLastName: '',
     positionNumber: '',
     positionLevel: '',
-    positionNotes: '',
+    positionTitle: '',
   });
 
   useEffect(() => {
@@ -483,7 +483,7 @@ function DeleteOnePositionPage() {
           assignTo_isPositionFetchError(true);
         }
         else {
-          assignTo_positionMSESI(data);
+          assignTo_positionMSPSI(data);
         }
       })
       .catch((err) => {
@@ -538,8 +538,8 @@ function DeleteOnePositionPage() {
               <td>{positionSurrogateID}</td>
             </tr>
             <PositionFormFieldsSansPositionSurrogateIDs
-              positionMSESI={positionMSESI}
-              assignTo_positionMSESI={assignTo_positionMSESI}
+              positionMSPSI={positionMSPSI}
+              assignTo_positionMSPSI={assignTo_positionMSPSI}
               forDisplayOnly={true}
             />
             <tr>

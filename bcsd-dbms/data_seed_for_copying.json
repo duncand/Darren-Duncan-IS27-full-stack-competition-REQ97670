@@ -1,11 +1,11 @@
 [
   {
     "positionSurrogateID": "12345",
-    "positionFirstName": "The Project With No Name",
-    "positionLastName": "John Doe",
+    "employeeFirstName": "The Project With No Name",
+    "employeeLastName": "John Doe",
     "positionNumber": "Jane Doe",
     "positionLevel": "2023/03/31",
-    "positionNotes": "Waterfall"
+    "positionTitle": "Waterfall"
   }
 ]
 

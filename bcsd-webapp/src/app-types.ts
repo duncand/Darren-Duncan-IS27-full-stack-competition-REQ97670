@@ -1,9 +1,9 @@
 export interface PositionMaybeSansPositionSurrogateIDs {
-  positionFirstName: string;
-  positionLastName: string;
+  employeeFirstName: string;
+  employeeLastName: string;
   positionNumber: string;
   positionLevel: string;
-  positionNotes: string;
+  positionTitle: string;
 }
 
 export interface Position extends PositionMaybeSansPositionSurrogateIDs {
@@ -54,16 +54,16 @@ export function isPositionMaybeSansPositionSurrogateIDs(given: any): boolean {
   if (typeof given !== 'object') {
     return false;
   }
-  if (!given.hasOwnProperty('positionFirstName')
-      || !isNonEmptyString(given.positionFirstName)
-      || !given.hasOwnProperty('positionLastName')
-      || !isNonEmptyString(given.positionLastName)
+  if (!given.hasOwnProperty('employeeFirstName')
+      || !isNonEmptyString(given.employeeFirstName)
+      || !given.hasOwnProperty('employeeLastName')
+      || !isNonEmptyString(given.employeeLastName)
       || !given.hasOwnProperty('positionNumber')
       || !isNonEmptyString(given.positionNumber)
       || !given.hasOwnProperty('positionLevel')
       || !isLevelCode(given.positionLevel)
-      || !given.hasOwnProperty('positionNotes')
-      || !isString(given.positionNotes)) {
+      || !given.hasOwnProperty('positionTitle')
+      || !isString(given.positionTitle)) {
     return false;
   }
   return true;

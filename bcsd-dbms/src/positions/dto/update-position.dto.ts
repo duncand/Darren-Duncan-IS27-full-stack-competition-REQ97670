@@ -23,7 +23,7 @@ export class UpdatePositionDto {
     required: true,
     example: 'John',
   })
-  positionFirstName: string;
+  employeeFirstName: string;
 
   @ApiProperty({
     type: String,
@@ -31,7 +31,7 @@ export class UpdatePositionDto {
     required: true,
     example: 'Doe',
   })
-  positionLastName: string;
+  employeeLastName: string;
 
   @ApiProperty({
     type: String,
@@ -55,5 +55,5 @@ export class UpdatePositionDto {
     required: true,
     example: 'Good work guy.',
   })
-  positionNotes: string;
+  positionTitle: string;
 }

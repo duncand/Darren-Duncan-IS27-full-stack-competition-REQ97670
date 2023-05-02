@@ -153,11 +153,11 @@ export class PositionsService {
     const positions: Array<UpdatePositionDto> = this.readDataFile();
     const position: UpdatePositionDto = {
       "positionSurrogateID": this.generateDistinctPositionSurrogateID(positions),
-      "positionFirstName": createPositionDto.positionFirstName,
-      "positionLastName": createPositionDto.positionLastName,
+      "employeeFirstName": createPositionDto.employeeFirstName,
+      "employeeLastName": createPositionDto.employeeLastName,
       "positionNumber": createPositionDto.positionNumber,
       "positionLevel": createPositionDto.positionLevel,
-      "positionNotes": createPositionDto.positionNotes,
+      "positionTitle": createPositionDto.positionTitle,
     };
     positions.push(position);
     if (!allLevelLimitsAreRespected(positions)) {
