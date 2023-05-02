@@ -12,33 +12,23 @@ export interface Position extends PositionMaybeSansPositionSurrogateIDs {
   positionSurrogateID: string;
 }
 
-// The levelFoo array elements correspond to each other by their indexes;
-// the order of the elements corresponds to the rank of the level.
-export const levelCodes: Array<string> = [
-  "director",
-  "senior_manager",
-  "manager",
-  "senior_developer",
-  "junior_developer",
+export interface Level {
+  code: string;
+  title: string;
+  limit: number|null;
+}
+
+// For limit, if a number is present, that is the maximum count of positions
+// who may hold that level at once; otherwise the maximum count is unlimited.
+export const levels: Array<Level> = [
+  { code: "director", title: "Director", limit: 1 },
+  { code: "senior_manager", title: "Senior Manager", limit: null },
+  { code: "manager", title: "Manager", limit: null },
+  { code: "senior_developer", title: "Senior Developer", limit: null },
+  { code: "junior_developer", title: "Junior Developer", limit: null },
 ];
 
-export const levelTitles: Array<string> = [
-  "Director",
-  "Senior Manager",
-  "Manager",
-  "Senior Developer",
-  "Junior Developer",
-];
-
-// If a number is present, that is the maximum count of positions who may
-// hold that level at once; otherwise the maximum count is unlimited.
-export const levelLimits: Array<number|null> = [
-  1,
-  null,
-  null,
-  null,
-  null,
-];
+export const levelCodes: Array<string> = levels.map((level) => level.code);
 
 export function isString(given: any): boolean {
   return (typeof given === 'string') && given.trim() === given;
@@ -98,11 +88,10 @@ export function allPositionSurrogateIDsAreDistinct(positions: Array<Position>): 
 }
 
 export function allLevelLimitsAreRespected(positions: Array<Position>): boolean {
-  for (let index = 0; index < levelCodes.length; index++) {
-    const levelLimit = levelLimits.at(index);
-    if (typeof levelLimit === "number") {
-      const levelCode = levelCodes.at(index);
-      if (positions.filter((elem) => elem.positionLevel === levelCode).length > levelLimit) {
+  for (let index = 0; index < levels.length; index++) {
+    const level: Level = levels.at(index) || {code: '', title: '', limit: null};
+    if (typeof level.limit === "number") {
+      if (positions.filter((elem) => elem.positionLevel === level.code).length > level.limit) {
         return false;
       }
     }

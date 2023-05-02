@@ -10,9 +10,7 @@ import {
 import {
   Position,
   PositionMaybeSansPositionSurrogateIDs,
-  levelCodes,
-  levelTitles,
-  levelLimits,
+  levels,
   isPosition,
   isPositionSansPositionSurrogateIDs,
   isPositions,
@@ -107,17 +105,16 @@ function DisplayOfAllLevels({ positions }: DisplayOfAllLevelsProps) {
   );
 
   let index: number = -1;
-  const tableRows = levelCodes.map((levelCode) => {
+  const tableRows = levels.map((level) => {
     index++;
-    const levelLimit = levelLimits.at(index);
-    const levelTitleText = levelTitles.at(index)
-      + ((typeof levelLimit === "number") ? ' (Limit of '+levelLimit+'.)' : '');
+    const levelTitleText = level.title
+      + ((typeof level.limit === "number") ? ' (Limit of '+level.limit+'.)' : '');
     return (
       <tr key={index}>
         <td>{levelTitleText}</td>
         <td>{index + 1}</td>
         <td><DisplayOfOneLevel
-          levelCode={levelCode}
+          levelCode={level.code}
           positions={positions}
         /></td>
       </tr>
