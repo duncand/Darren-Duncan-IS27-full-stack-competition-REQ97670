@@ -4,7 +4,7 @@ export class CreatePositionDto {
   @ApiProperty({
     type: String,
     minLength: 1,
-    required: true,
+    required: false,
     example: 'John',
   })
   employeeFirstName: string;
@@ -12,7 +12,7 @@ export class CreatePositionDto {
   @ApiProperty({
     type: String,
     minLength: 1,
-    required: true,
+    required: false,
     example: 'Doe',
   })
   employeeLastName: string;
@@ -20,7 +20,7 @@ export class CreatePositionDto {
   @ApiProperty({
     type: String,
     minLength: 1,
-    required: true,
+    required: false,
     example: '703',
   })
   employeeNumber: string;
@@ -48,4 +48,12 @@ export class CreatePositionDto {
     example: 'Cat Herder',
   })
   positionTitle: string;
+
+  @ApiProperty({
+    type: String,
+    minLength: 1,
+    required: false,
+    example: '678910',
+  })
+  parentPSID: string;
 }

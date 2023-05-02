@@ -62,9 +62,11 @@ function DisplayOfOneLevel({ levelCode, positions }: DisplayOfOneLevelProps) {
       <th>Position Surrogate ID</th>
       <th>Employee First Name</th>
       <th>Employee Last Name</th>
+      <th>Employee Number</th>
       <th>Position Number</th>
       <th>Position Level</th>
       <th>Position Title</th>
+      <th>Parent Position Surrogate ID</th>
     </tr>
   );
 
@@ -79,6 +81,7 @@ function DisplayOfOneLevel({ levelCode, positions }: DisplayOfOneLevelProps) {
       <td>{position.positionNumber}</td>
       <td>{position.positionLevel}</td>
       <td>{position.positionTitle}</td>
+      <td>{position.parentPSID}</td>
     </tr>
   );
 
@@ -211,6 +214,10 @@ function PositionFormFieldsSansPositionSurrogateIDs(
           <td>Position Title:</td>
           <td>{positionMSPSI.positionTitle}</td>
         </tr>
+        <tr>
+          <td>Parent Position Surrogate ID:</td>
+          <td>{positionMSPSI.parentPSID}</td>
+        </tr>
       </>
     );
   }
@@ -277,6 +284,16 @@ function PositionFormFieldsSansPositionSurrogateIDs(
           onChange={(e) => assignTo_positionMSPSI({ ...positionMSPSI, positionTitle: e.target.value })}
           /></td>
       </tr>
+      <tr>
+        <td>Parent Position Surrogate ID:</td>
+        <td><input
+          type="text"
+          id="parentPSID"
+          name="parentPSID"
+          value={positionMSPSI.parentPSID}
+          onChange={(e) => assignTo_positionMSPSI({ ...positionMSPSI, parentPSID: e.target.value })}
+          /></td>
+      </tr>
     </>
   );
 }
@@ -290,6 +307,7 @@ function normalizedPositionSansPositionSurrogateIDs(
     positionNumber: positionMSPSI.positionNumber.trim(),
     positionLevel: positionMSPSI.positionLevel.trim(),
     positionTitle: positionMSPSI.positionTitle.trim(),
+    parentPSID: positionMSPSI.parentPSID.trim(),
   };
 }
 
@@ -301,6 +319,7 @@ function CreateOnePositionPage() {
     positionNumber: '',
     positionLevel: '',
     positionTitle: '',
+    parentPSID: '',
   });
 
   function handlePositionCreateFormSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -375,6 +394,7 @@ function EditOnePositionPage() {
     positionNumber: '',
     positionLevel: '',
     positionTitle: '',
+    parentPSID: '',
   });
 
   useEffect(() => {
@@ -484,6 +504,7 @@ function DeleteOnePositionPage() {
     positionNumber: '',
     positionLevel: '',
     positionTitle: '',
+    parentPSID: '',
   });
 
   useEffect(() => {

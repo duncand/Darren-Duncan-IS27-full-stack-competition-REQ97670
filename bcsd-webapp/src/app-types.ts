@@ -5,6 +5,7 @@ export interface PositionMaybeSansPositionSurrogateIDs {
   positionNumber: string;
   positionLevel: string;
   positionTitle: string;
+  parentPSID: string;
 }
 
 export interface Position extends PositionMaybeSansPositionSurrogateIDs {
@@ -40,11 +41,11 @@ export const levelLimits: Array<number|null> = [
 ];
 
 export function isString(given: any): boolean {
-  return (typeof given === 'string');
+  return (typeof given === 'string') && given.trim() === given;
 }
 
 export function isNonEmptyString(given: any): boolean {
-  return (typeof given === 'string') && given.trim() !== '';
+  return isString(given) && given !== '';
 }
 
 export function isLevelCode(given: any): boolean {
@@ -56,17 +57,19 @@ export function isPositionMaybeSansPositionSurrogateIDs(given: any): boolean {
     return false;
   }
   if (!given.hasOwnProperty('employeeFirstName')
-      || !isNonEmptyString(given.employeeFirstName)
+      || !isString(given.employeeFirstName)
       || !given.hasOwnProperty('employeeLastName')
-      || !isNonEmptyString(given.employeeLastName)
+      || !isString(given.employeeLastName)
       || !given.hasOwnProperty('employeeNumber')
-      || !isNonEmptyString(given.employeeNumber)
+      || !isString(given.employeeNumber)
       || !given.hasOwnProperty('positionNumber')
       || !isNonEmptyString(given.positionNumber)
       || !given.hasOwnProperty('positionLevel')
       || !isLevelCode(given.positionLevel)
       || !given.hasOwnProperty('positionTitle')
-      || !isString(given.positionTitle)) {
+      || !isNonEmptyString(given.positionTitle)
+      || !given.hasOwnProperty('parentPSID')
+      || !isString(given.parentPSID)) {
     return false;
   }
   return true;
@@ -74,12 +77,12 @@ export function isPositionMaybeSansPositionSurrogateIDs(given: any): boolean {
 
 export function isPositionSansPositionSurrogateIDs(given: any): boolean {
   return isPositionMaybeSansPositionSurrogateIDs(given)
-    && Object.keys(given).length === 6;
+    && Object.keys(given).length === 7;
 }
 
 export function isPosition(given: any): boolean {
   return isPositionMaybeSansPositionSurrogateIDs(given)
-    && Object.keys(given).length === 7
+    && Object.keys(given).length === 8
     && given.hasOwnProperty('positionSurrogateID')
     && isNonEmptyString(given.positionSurrogateID);
 }

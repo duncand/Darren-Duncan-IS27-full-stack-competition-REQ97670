@@ -159,6 +159,7 @@ export class PositionsService {
       "positionNumber": createPositionDto.positionNumber,
       "positionLevel": createPositionDto.positionLevel,
       "positionTitle": createPositionDto.positionTitle,
+      "parentPSID": createPositionDto.parentPSID,
     };
     positions.push(position);
     if (!allLevelLimitsAreRespected(positions)) {
