@@ -6,11 +6,27 @@ parts, see [Overview](../README.md).
 This part of the document explains how to install and run BCSD on a local
 developer machine, which is also a basis that they can develop it further.
 
-## Installation
-
 These instructions assume a modern UNIX-like shell environment, like one
 would have with a modern Linux or Apple MacOS system.  If you are using a
 Microsoft Windows system, some alterations may be necessary.
+
+## Installation
+
+### Git
+
+You are recommended to have Git <https://git-scm.com> installed on your
+local machine, as a means to get the project source code, although you can
+also download it without using that.
+
+On MacOS, Apple provides Git as part of its devtools; you can cause it to
+be installed by trying to run "git" in the Terminal which is initially a
+shim and then you approve the Apple devtools install.
+
+### Homebrew
+
+The Homebrew <https://brew.sh> package manager for MacOS is used to install
+other prerequisites such as Node.js, so Homebrew has to be installed first
+to do that.
 
 ### Prerequisite - Node.js
 
@@ -25,6 +41,8 @@ you would use for most setup or runtime tasks afterwards.
 
 Obtain the latest source code for this project from its current repository.
 You can use a `git` client to clone/pull it, or GitHub can privide a zip file.
+
+<https://github.com/duncand/Darren-Duncan-IS27-full-stack-competition-REQ97670>
 
 All shell command sequences given here to setup or run BCSD itself assume
 your starting current working directory is the root level of your clone of
