@@ -221,3 +221,12 @@ DATA_FILE_PATH=data.json npm run test:cov
 ```
 
 You should see the output of the tests in the terminal.
+
+### BCSD-WEBAPP
+
+To run the BCSD-WEBAPP automated tests, in a shell session, first `cd` into
+the `bcsd-webapp` folder and run the following:
+
+```
+npm test
+```
