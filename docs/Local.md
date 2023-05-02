@@ -1,10 +1,12 @@
-# BCSD - Local Deployment
+# BCSD - Local Deployment and Testing
 
 This document consists of multiple parts; for a directory to all of the
 parts, see [Overview](../README.md).
 
 This part of the document explains how to install and run BCSD on a local
 developer machine, which is also a basis that they can develop it further.
+
+It also talks about how to run the automated tests locally.
 
 These instructions assume a modern UNIX-like shell environment, like one
 would have with a modern Linux or Apple MacOS system.  If you are using a
@@ -188,3 +190,34 @@ running to actually use the application as a regular end user.
 Visit <http://localhost:3000/api/api-docs> to view the REST API
 documentation or try out invoking it directly.
 
+## Running the Automated Tests
+
+Each of BCSD-DBMS and BCSD-WEBAPP includes an automated test suite.
+
+The following assumes that `npm install` has been run, but that the
+applications are not currently running.
+
+### BCSD-DBMS
+
+To run the BCSD-DBMS automated tests, in a shell session, first `cd` into
+the `bcsd-dbms` folder and run any or all of the following options...
+
+For unit tests:
+
+```
+DATA_FILE_PATH=data.json npm run test
+```
+
+For end-to-end tests:
+
+```
+DATA_FILE_PATH=data.json npm run test:e2e
+```
+
+For test coverage:
+
+```
+DATA_FILE_PATH=data.json npm run test:cov
+```
+
+You should see the output of the tests in the terminal.

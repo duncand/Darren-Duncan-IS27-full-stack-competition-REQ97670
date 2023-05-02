@@ -30,7 +30,7 @@ This document consists of multiple parts:
 1. BCSD - Overview (the current part)
 1. [BCSD - End User Manual](docs/Manual.md)
 1. [BCSD - Structure](docs/Structure.md)
-1. [BCSD - Local Deployment](docs/Local.md)
+1. [BCSD - Local Deployment and Testing](docs/Local.md)
 1. [BCSD - Heroku Deployment](docs/Heroku.md)
 1. [BCSD - Future Functionality](docs/Future.md)
 1. [BCSD - Assumptions](docs/Assumptions.md)

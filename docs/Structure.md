@@ -3,7 +3,11 @@
 This document consists of multiple parts; for a directory to all of the
 parts, see [Overview](../README.md).
 
-This part of the document explains ...
+This part of the document explains how BCSD is structured, with an overview
+of its parts and how it works.
+
+This document part is not exhaustive; where there are gaps, you can see the
+source code files.
 
 BCSD is implemented as a pair of applications named BCSD-DBMS and
 BCSD-WEBAPP, such that the latter is what end users typically interact
