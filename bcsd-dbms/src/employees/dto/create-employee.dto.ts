@@ -31,7 +31,7 @@ export class CreateEmployeeDto {
     required: true,
     example: 'manager',
   })
-  employeePosition: string;
+  employeeLevel: string;
 
   @ApiProperty({
     type: String,

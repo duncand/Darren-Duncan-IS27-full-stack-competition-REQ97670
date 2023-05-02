@@ -27,7 +27,7 @@ export class EmployeesController {
   })
   @ApiBadRequestResponse({
     description: 'Given request body is not of a valid format'
-      + " or too many employees have this one's employeePosition"
+      + " or too many employees have this one's employeeLevel"
   })
   createOne(@Body() createEmployeeDto: CreateEmployeeDto) {
     return this.employeesService.createOne(createEmployeeDto);
@@ -73,7 +73,7 @@ export class EmployeesController {
   @ApiBadRequestResponse({
     description: 'Given employeeSurrogateID or request body is not of a valid format'
       + " or employeeSurrogateIDs in url and body don't match"
-      + " or too many employees have this one's employeePosition"
+      + " or too many employees have this one's employeeLevel"
   })
   @ApiNotFoundResponse({
     description: 'No Employee found matching given employeeSurrogateID'

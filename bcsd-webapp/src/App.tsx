@@ -10,9 +10,9 @@ import {
 import {
   Employee,
   EmployeeMaybeSansEmployeeSurrogateIDs,
-  positionCodes,
-  positionTitles,
-  positionLimits,
+  levelCodes,
+  levelTitles,
+  levelLimits,
   isEmployee,
   isEmployeeSansEmployeeSurrogateIDs,
   isEmployees,
@@ -29,12 +29,12 @@ interface EmployeeCEDProps {
   forDisplayOnly: boolean;
 }
 
-interface DisplayOfOnePositionProps {
-  positionCode: string;
+interface DisplayOfOneLevelProps {
+  levelCode: string;
   employees: Array<Employee>;
 }
 
-interface DisplayOfAllPositionsProps {
+interface DisplayOfAllLevelsProps {
   employees: Array<Employee>;
 }
 
@@ -45,13 +45,13 @@ function dbmsUriBase(): string {
   return 'http://'+host+':'+port+'/api';
 }
 
-function DisplayOfOnePosition({ positionCode, employees }: DisplayOfOnePositionProps) {
+function DisplayOfOneLevel({ levelCode, employees }: DisplayOfOneLevelProps) {
   const filteredEmployees = employees.filter(
-    (employee) => employee.employeePosition === positionCode);
+    (employee) => employee.employeeLevel === levelCode);
 
   if (filteredEmployees.length === 0) {
     return(
-      <p>There are no employees in this position.</p>
+      <p>There are no employees in this level.</p>
     );
   }
 
@@ -63,7 +63,7 @@ function DisplayOfOnePosition({ positionCode, employees }: DisplayOfOnePositionP
       <th>Employee First Name</th>
       <th>Employee Last Name</th>
       <th>Employee Number</th>
-      <th>Employee Position</th>
+      <th>Employee Level</th>
       <th>Employee Notes</th>
     </tr>
   );
@@ -76,7 +76,7 @@ function DisplayOfOnePosition({ positionCode, employees }: DisplayOfOnePositionP
       <td>{employee.employeeFirstName}</td>
       <td>{employee.employeeLastName}</td>
       <td>{employee.employeeNumber}</td>
-      <td>{employee.employeePosition}</td>
+      <td>{employee.employeeLevel}</td>
       <td>{employee.employeeNotes}</td>
     </tr>
   );
@@ -93,27 +93,27 @@ function DisplayOfOnePosition({ positionCode, employees }: DisplayOfOnePositionP
   );
 }
 
-function DisplayOfAllPositions({ employees }: DisplayOfAllPositionsProps) {
+function DisplayOfAllLevels({ employees }: DisplayOfAllLevelsProps) {
   const tableHeading = (
     <tr>
-      <th>Position Title</th>
-      <th>Position Number</th>
+      <th>Level Title</th>
+      <th>Level Number</th>
       <th>Employees</th>
     </tr>
   );
 
   let index: number = -1;
-  const tableRows = positionCodes.map((positionCode) => {
+  const tableRows = levelCodes.map((levelCode) => {
     index++;
-    const positionLimit = positionLimits.at(index);
-    const positionTitleText = positionTitles.at(index)
-      + ((typeof positionLimit === "number") ? ' (Limit of '+positionLimit+'.)' : '');
+    const levelLimit = levelLimits.at(index);
+    const levelTitleText = levelTitles.at(index)
+      + ((typeof levelLimit === "number") ? ' (Limit of '+levelLimit+'.)' : '');
     return (
       <tr key={index}>
-        <td>{positionTitleText}</td>
+        <td>{levelTitleText}</td>
         <td>{index + 1}</td>
-        <td><DisplayOfOnePosition
-          positionCode={positionCode}
+        <td><DisplayOfOneLevel
+          levelCode={levelCode}
           employees={employees}
         /></td>
       </tr>
@@ -172,7 +172,7 @@ function ViewAllEmployeesPage() {
   }
 
   return (
-    <DisplayOfAllPositions employees={employees} />
+    <DisplayOfAllLevels employees={employees} />
   );
 }
 
@@ -199,8 +199,8 @@ function EmployeeFormFieldsSansEmployeeSurrogateIDs(
           <td>{employeeMSESI.employeeNumber}</td>
         </tr>
         <tr>
-          <td>Employee Position:</td>
-          <td>{employeeMSESI.employeePosition}</td>
+          <td>Employee Level:</td>
+          <td>{employeeMSESI.employeeLevel}</td>
         </tr>
         <tr>
           <td>Employee Notes:</td>
@@ -243,13 +243,13 @@ function EmployeeFormFieldsSansEmployeeSurrogateIDs(
           /></td>
       </tr>
       <tr>
-        <td>Employee Position:</td>
+        <td>Employee Level:</td>
         <td><input
           type="text"
-          id="employeePosition"
-          name="employeePosition"
-          value={employeeMSESI.employeePosition}
-          onChange={(e) => assignTo_employeeMSESI({ ...employeeMSESI, employeePosition: e.target.value })}
+          id="employeeLevel"
+          name="employeeLevel"
+          value={employeeMSESI.employeeLevel}
+          onChange={(e) => assignTo_employeeMSESI({ ...employeeMSESI, employeeLevel: e.target.value })}
           /></td>
       </tr>
       <tr>
@@ -272,7 +272,7 @@ function normalizedEmployeeSansEmployeeSurrogateIDs(
     employeeFirstName: employeeMSESI.employeeFirstName.trim(),
     employeeLastName: employeeMSESI.employeeLastName.trim(),
     employeeNumber: employeeMSESI.employeeNumber.trim(),
-    employeePosition: employeeMSESI.employeePosition.trim(),
+    employeeLevel: employeeMSESI.employeeLevel.trim(),
     employeeNotes: employeeMSESI.employeeNotes.trim(),
   };
 }
@@ -282,7 +282,7 @@ function CreateOneEmployeePage() {
     employeeFirstName: '',
     employeeLastName: '',
     employeeNumber: '',
-    employeePosition: '',
+    employeeLevel: '',
     employeeNotes: '',
   });
 
@@ -307,7 +307,7 @@ function CreateOneEmployeePage() {
           alert('Changes were saved.');
         }
         else if (response.status === 400) {
-          alert('Failed to save changes as bad client request; you might have exceeded the limit on how many employees may have this Position.');
+          alert('Failed to save changes as bad client request; you might have exceeded the limit on how many employees may have this Level.');
         }
         else {
           alert('Something else happened: '+response.status+' '+response.statusText);
@@ -355,7 +355,7 @@ function EditOneEmployeePage() {
     employeeFirstName: '',
     employeeLastName: '',
     employeeNumber: '',
-    employeePosition: '',
+    employeeLevel: '',
     employeeNotes: '',
   });
 
@@ -412,7 +412,7 @@ function EditOneEmployeePage() {
           alert('Changes were saved.');
         }
         else if (response.status === 400) {
-          alert('Failed to save changes as bad client request; you might have exceeded the limit on how many employees may have this Position.');
+          alert('Failed to save changes as bad client request; you might have exceeded the limit on how many employees may have this Level.');
         }
         else if (response.status === 404) {
           alert('Failed to save changes as employee no longer in database.');
@@ -463,7 +463,7 @@ function DeleteOneEmployeePage() {
     employeeFirstName: '',
     employeeLastName: '',
     employeeNumber: '',
-    employeePosition: '',
+    employeeLevel: '',
     employeeNotes: '',
   });
 

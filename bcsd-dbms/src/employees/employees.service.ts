@@ -10,7 +10,7 @@ import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import {
   allEmployeeSurrogateIDsAreDistinct,
-  allPositionLimitsAreRespected,
+  allLevelLimitsAreRespected,
   isArrayOfEmployee,
   isNonEmptyString,
   isEmployee,
@@ -80,9 +80,9 @@ export class EmployeesService {
       // This should result in a generic 500 API response.
       throw new Error(msg);
     }
-    if (!allPositionLimitsAreRespected(dataFileAsAny)) {
+    if (!allLevelLimitsAreRespected(dataFileAsAny)) {
       const msg: string = 'EmployeesService.readDataFile():'
-        + ' data file Employees exceed limits on an employeePosition'
+        + ' data file Employees exceed limits on an employeeLevel'
         + ' from "' + this.dataFilePath + '"';
       console.log(msg);
       // This should result in a generic 500 API response.
@@ -156,13 +156,13 @@ export class EmployeesService {
       "employeeFirstName": createEmployeeDto.employeeFirstName,
       "employeeLastName": createEmployeeDto.employeeLastName,
       "employeeNumber": createEmployeeDto.employeeNumber,
-      "employeePosition": createEmployeeDto.employeePosition,
+      "employeeLevel": createEmployeeDto.employeeLevel,
       "employeeNotes": createEmployeeDto.employeeNotes,
     };
     employees.push(employee);
-    if (!allPositionLimitsAreRespected(employees)) {
+    if (!allLevelLimitsAreRespected(employees)) {
       throw new BadRequestException(
-        "too many employees with this employeePosition");
+        "too many employees with this employeeLevel");
     }
     this.writeDataFile(employees);
   }
@@ -207,9 +207,9 @@ export class EmployeesService {
         "no Employee found matching given employeeSurrogateID");
     }
     employees.splice(maybeIndexOfMatchingEmployee, 1, updateEmployeeDto);
-    if (!allPositionLimitsAreRespected(employees)) {
+    if (!allLevelLimitsAreRespected(employees)) {
       throw new BadRequestException(
-        "too many employees with this employeePosition");
+        "too many employees with this employeeLevel");
     }
     this.writeDataFile(employees);
   }
