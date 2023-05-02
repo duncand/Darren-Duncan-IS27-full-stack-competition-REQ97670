@@ -9,12 +9,15 @@ import * as fs from 'fs';
 import { CreatePositionDto } from './dto/create-position.dto';
 import { UpdatePositionDto } from './dto/update-position.dto';
 import {
-  allPositionSurrogateIDsAreDistinct,
   allLevelLimitsAreRespected,
+  allPositionSurrogateIDsAreDistinct,
+  generateDistinctPositionSurrogateID,
   isArrayOfPosition,
   isNonEmptyString,
   isPosition,
   isPositionSansPositionSurrogateIDs,
+  maybeIndexOfMatchingPosition,
+  positionAtIndex,
 } from '../app-types';
 
 @Injectable()
@@ -114,37 +117,6 @@ export class PositionsService {
     }
   }
 
-  private maybeIndexOfMatchingPosition(
-      positions: Array<UpdatePositionDto>, positionSurrogateID: string)
-      : number {
-    return positions.findIndex((elem) => elem.positionSurrogateID === positionSurrogateID);
-  }
-
-  private positionAtIndex(positions: Array<UpdatePositionDto>, index: number)
-      : UpdatePositionDto {
-    // We assume positionAtIndex() is called exclusively on inputs
-    // for which maybeIndexOfMatchingPosition() had a successful find.
-    // The "?? new UpdatePositionDto()" is only here because strict
-    // TypeScript would complain about trying to assign X|undefined to X.
-    return positions.at(index) ?? new UpdatePositionDto();
-  }
-
-  private generateDistinctPositionSurrogateID(positions: Array<UpdatePositionDto>): string {
-    // We will use a simple generator algorithm, that takes the rounded
-    // result of multiplying the current UNIX timestamp in milliseconds
-    // by a pseudo-random number, then modulo 2^16 so its easier to read,
-    // to generate a positionSurrogateID.
-    // As a guard for the tiny possibility of a collision with
-    // an existing positionSurrogateID, in the event of a collision we will
-    // append an "x" repeatedly until there isn't a collision.
-    var positionSurrogateID: string
-      = (Math.floor(Date.now() * Math.random()) % (2**16)).toString();
-    while (this.maybeIndexOfMatchingPosition(positions, positionSurrogateID) !== -1) {
-      positionSurrogateID = positionSurrogateID + 'x';
-    }
-    return positionSurrogateID;
-  }
-
   createOne(createPositionDto: CreatePositionDto) {
     if (!isPositionSansPositionSurrogateIDs(createPositionDto)) {
       throw new BadRequestException(
@@ -152,7 +124,7 @@ export class PositionsService {
     }
     const positions: Array<UpdatePositionDto> = this.readDataFile();
     const position: UpdatePositionDto = {
-      "positionSurrogateID": this.generateDistinctPositionSurrogateID(positions),
+      "positionSurrogateID": generateDistinctPositionSurrogateID(positions),
       "employeeFirstName": createPositionDto.employeeFirstName,
       "employeeLastName": createPositionDto.employeeLastName,
       "employeeNumber": createPositionDto.employeeNumber,
@@ -179,13 +151,12 @@ export class PositionsService {
         "positionSurrogateID (ignoring spaces) isn't a non-empty string");
     }
     const positions: Array<UpdatePositionDto> = this.readDataFile();
-    const maybeIndexOfMatchingPosition
-      = this.maybeIndexOfMatchingPosition(positions, positionSurrogateID);
-    if (maybeIndexOfMatchingPosition === -1) {
+    const mayIndMatPos = maybeIndexOfMatchingPosition(positions, positionSurrogateID);
+    if (mayIndMatPos === -1) {
       throw new NotFoundException(
         "no Position found matching given positionSurrogateID");
     }
-    return this.positionAtIndex(positions, maybeIndexOfMatchingPosition);
+    return positionAtIndex(positions, mayIndMatPos);
   }
 
   updateOne(positionSurrogateID: string, updatePositionDto: UpdatePositionDto) {
@@ -202,13 +173,12 @@ export class PositionsService {
         "positionSurrogateIDs in url and request body don't match");
     }
     const positions: Array<UpdatePositionDto> = this.readDataFile();
-    const maybeIndexOfMatchingPosition
-      = this.maybeIndexOfMatchingPosition(positions, positionSurrogateID);
-    if (maybeIndexOfMatchingPosition === -1) {
+    const mayIndMatPos = maybeIndexOfMatchingPosition(positions, positionSurrogateID);
+    if (mayIndMatPos === -1) {
       throw new NotFoundException(
         "no Position found matching given positionSurrogateID");
     }
-    positions.splice(maybeIndexOfMatchingPosition, 1, updatePositionDto);
+    positions.splice(mayIndMatPos, 1, updatePositionDto);
     if (!allLevelLimitsAreRespected(positions)) {
       throw new BadRequestException(
         "too many positions with this positionLevel");
@@ -222,13 +192,12 @@ export class PositionsService {
         "positionSurrogateID (ignoring spaces) isn't a non-empty string");
     }
     const positions: Array<UpdatePositionDto> = this.readDataFile();
-    const maybeIndexOfMatchingPosition
-      = this.maybeIndexOfMatchingPosition(positions, positionSurrogateID);
-    if (maybeIndexOfMatchingPosition === -1) {
+    const mayIndMatPos = maybeIndexOfMatchingPosition(positions, positionSurrogateID);
+    if (mayIndMatPos === -1) {
       throw new NotFoundException(
         "no Position found matching given positionSurrogateID");
     }
-    positions.splice(maybeIndexOfMatchingPosition, 1);
+    positions.splice(mayIndMatPos, 1);
     this.writeDataFile(positions);
   }
 }

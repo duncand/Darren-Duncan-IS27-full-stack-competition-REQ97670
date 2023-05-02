@@ -20,8 +20,8 @@ export class HealthController {
   })
   check() {
     // What we should be listening on.
-    const host = process.env.HOST || '127.0.0.1';
-    const port = process.env.PORT || 80;
+    const host = process.env.HOST ?? '127.0.0.1';
+    const port = process.env.PORT ?? 80;
     return this.health.check([
       () => this.http.pingCheck('/api/positions', 'http://'+host+':'+port+'/api/positions'),
     ]);

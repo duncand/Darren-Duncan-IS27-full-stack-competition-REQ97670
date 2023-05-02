@@ -1,11 +1,11 @@
 export interface PositionMaybeSansPositionSurrogateIDs {
+  parentPSID: string;
+  positionLevel: string;
+  positionTitle: string;
+  positionNumber: string;
   employeeFirstName: string;
   employeeLastName: string;
   employeeNumber: string;
-  positionNumber: string;
-  positionLevel: string;
-  positionTitle: string;
-  parentPSID: string;
 }
 
 export interface Position extends PositionMaybeSansPositionSurrogateIDs {
@@ -17,6 +17,29 @@ export interface Level {
   title: string;
   limit: number|null;
 }
+
+export const emptyLevel = {code: '', title: '', limit: null};
+
+export const emptyPositionMSPSI = {
+  employeeFirstName: '',
+  employeeLastName: '',
+  employeeNumber: '',
+  positionNumber: '',
+  positionLevel: '',
+  positionTitle: '',
+  parentPSID: '',
+};
+
+export const emptyPosition = {
+  positionSurrogateID: '',
+  parentPSID: '',
+  positionLevel: '',
+  positionTitle: '',
+  positionNumber: '',
+  employeeFirstName: '',
+  employeeLastName: '',
+  employeeNumber: '',
+};
 
 // For limit, if a number is present, that is the maximum count of positions
 // who may hold that level at once; otherwise the maximum count is unlimited.
@@ -89,7 +112,7 @@ export function allPositionSurrogateIDsAreDistinct(positions: Array<Position>): 
 
 export function allLevelLimitsAreRespected(positions: Array<Position>): boolean {
   for (let index = 0; index < levels.length; index++) {
-    const level: Level = levels.at(index) || {code: '', title: '', limit: null};
+    const level: Level = levelAtIndex(index);
     if (typeof level.limit === "number") {
       if (positions.filter((elem) => elem.positionLevel === level.code).length > level.limit) {
         return false;
@@ -103,4 +126,36 @@ export function isPositions(given: any): boolean {
   return isArrayOfPosition(given)
     && allPositionSurrogateIDsAreDistinct(given)
     && allLevelLimitsAreRespected(given);
+}
+
+export function maybeIndexOfMatchingPosition(
+    positions: Array<Position>, positionSurrogateID: string)
+    : number {
+  return positions.findIndex((elem) => elem.positionSurrogateID === positionSurrogateID);
+}
+
+export function levelAtIndex(index: number): Level {
+  return levels.at(index) ?? emptyLevel;
+}
+
+export function positionAtIndex(positions: Array<Position>, index: number): Position {
+  // We assume positionAtIndex() is called exclusively on inputs
+  // for which maybeIndexOfMatchingPosition() had a successful find.
+  return positions.at(index) ?? emptyPosition;
+}
+
+export function generateDistinctPositionSurrogateID(positions: Array<Position>): string {
+  // We will use a simple generator algorithm, that takes the rounded
+  // result of multiplying the current UNIX timestamp in milliseconds
+  // by a pseudo-random number, then modulo 2^16 so its easier to read,
+  // to generate a positionSurrogateID.
+  // As a guard for the tiny possibility of a collision with
+  // an existing positionSurrogateID, in the event of a collision we will
+  // append an "x" repeatedly until there isn't a collision.
+  var positionSurrogateID: string
+    = (Math.floor(Date.now() * Math.random()) % (2**16)).toString();
+  while (maybeIndexOfMatchingPosition(positions, positionSurrogateID) !== -1) {
+    positionSurrogateID = positionSurrogateID + 'x';
+  }
+  return positionSurrogateID;
 }

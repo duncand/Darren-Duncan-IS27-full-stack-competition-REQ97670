@@ -11,8 +11,8 @@ async function bootstrap() {
     = await NestFactory.create<NestExpressApplication>(AppModule);
 
   // What we should listen on.
-  const host = process.env.HOST || '127.0.0.1';
-  const port = process.env.PORT || 80;
+  const host = process.env.HOST ?? '127.0.0.1';
+  const port = process.env.PORT ?? 80;
 
   // Assign global url path prefix to all endpoints.
   // So then otherwise-unqalified "positions" is under /api/positions and so on.

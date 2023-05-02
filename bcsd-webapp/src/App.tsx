@@ -10,10 +10,12 @@ import {
 import {
   Position,
   PositionMaybeSansPositionSurrogateIDs,
-  levels,
+  emptyPositionMSPSI,
   isPosition,
   isPositionSansPositionSurrogateIDs,
   isPositions,
+  levelAtIndex,
+  positionAtIndex,
 } from './app-types';
 
 import './App.css';
@@ -27,113 +29,97 @@ interface PositionCEDProps {
   forDisplayOnly: boolean;
 }
 
-interface DisplayOfOneLevelProps {
-  levelCode: string;
-  positions: Array<Position>;
-}
-
-interface DisplayOfAllLevelsProps {
+interface DisplayPositionWithChildrenProps {
+  selfPosition: Position;
   positions: Array<Position>;
 }
 
 function dbmsUriBase(): string {
   // Defaults match those of the API server.
-  const host = process.env.REACT_APP_DBMS_HOST || '127.0.0.1';
-  const port = process.env.REACT_APP_DBMS_PORT || 80;
+  const host = process.env.REACT_APP_DBMS_HOST ?? '127.0.0.1';
+  const port = process.env.REACT_APP_DBMS_PORT ?? 80;
   return 'http://'+host+':'+port+'/api';
 }
 
-function DisplayOfOneLevel({ levelCode, positions }: DisplayOfOneLevelProps) {
-  const filteredPositions = positions.filter(
-    (position) => position.positionLevel === levelCode);
+function DisplayPositionWithChildren({ selfPosition, positions }: DisplayPositionWithChildrenProps) {
 
-  if (filteredPositions.length === 0) {
-    return(
-      <p>There are no positions in this level.</p>
-    );
-  }
-
-  const tableHeading = (
-    <tr>
-      <th></th>
-      <th></th>
-      <th>Position Surrogate ID</th>
-      <th>Parent Position Surrogate ID</th>
-      <th>Position Level</th>
-      <th>Position Title</th>
-      <th>Position Number</th>
-      <th>Employee First Name</th>
-      <th>Employee Last Name</th>
-      <th>Employee Number</th>
-    </tr>
-  );
-
-  const tableRows = filteredPositions.map((position) =>
-    <tr key={position.positionSurrogateID}>
-      <td><Link to={'/edit/' + position.positionSurrogateID}>Edit</Link></td>
-      <td><Link to={'/delete/' + position.positionSurrogateID}>Delete</Link></td>
-      <td>{position.positionSurrogateID}</td>
-      <td>{position.parentPSID}</td>
-      <td>{position.positionLevel}</td>
-      <td>{position.positionTitle}</td>
-      <td>{position.positionNumber}</td>
-      <td>{position.employeeFirstName}</td>
-      <td>{position.employeeLastName}</td>
-      <td>{position.employeeNumber}</td>
-    </tr>
-  );
-
-  return (
+  const selfRendered = (
     <table>
       <thead>
-        {tableHeading}
+        <tr>
+          <th></th>
+          <th></th>
+          <th>Position Surrogate ID</th>
+          <th>Parent Position Surrogate ID</th>
+          <th>Position Level</th>
+          <th>Position Title</th>
+          <th>Position Number</th>
+          <th>Employee First Name</th>
+          <th>Employee Last Name</th>
+          <th>Employee Number</th>
+        </tr>
       </thead>
       <tbody>
-        {tableRows}
+        <tr>
+          <td><Link to={'/edit/' + selfPosition.positionSurrogateID}>Edit</Link></td>
+          <td><Link to={'/delete/' + selfPosition.positionSurrogateID}>Delete</Link></td>
+          <td>{selfPosition.positionSurrogateID}</td>
+          <td>{selfPosition.parentPSID}</td>
+          <td>{selfPosition.positionLevel}</td>
+          <td>{selfPosition.positionTitle}</td>
+          <td>{selfPosition.positionNumber}</td>
+          <td>{selfPosition.employeeFirstName}</td>
+          <td>{selfPosition.employeeLastName}</td>
+          <td>{selfPosition.employeeNumber}</td>
+        </tr>
       </tbody>
     </table>
   );
-}
 
-function DisplayOfAllLevels({ positions }: DisplayOfAllLevelsProps) {
-  const tableHeading = (
-    <tr>
-      <th>Level Title</th>
-      <th>Level Number</th>
-      <th>Positions</th>
-    </tr>
-  );
+  const childPositions = positions.filter((position) =>
+    position.parentPSID === selfPosition.positionSurrogateID);
 
-  let index: number = -1;
-  const tableRows = levels.map((level) => {
-    index++;
-    const levelTitleText = level.title
-      + ((typeof level.limit === "number") ? ' (Limit of '+level.limit+'.)' : '');
-    return (
-      <tr key={index}>
-        <td>{levelTitleText}</td>
-        <td>{index + 1}</td>
-        <td><DisplayOfOneLevel
-          levelCode={level.code}
-          positions={positions}
-        /></td>
+  var childrenRendered;
+  if (childPositions.length === 0) {
+    childrenRendered = (
+      <p>No children.</p>
+    );
+  }
+  else {
+    const childTableRows = childPositions.map((position) =>
+      <tr key={position.positionSurrogateID}>
+        <td>
+          <DisplayPositionWithChildren
+            selfPosition={position}
+            positions={positions}
+          />
+        </td>
       </tr>
-    )
-  });
-
-  return (
-    <>
-      <p>Total of {positions.length} positions displayed.</p>
-      <p><Link to={'/create'}>Add</Link> a new position.</p>
+    );
+    childrenRendered = (
       <table>
-        <thead>
-          {tableHeading}
-        </thead>
         <tbody>
-          {tableRows}
+          {childTableRows}
         </tbody>
       </table>
-    </>
+    );
+  }
+
+  return (
+    <table>
+      <tbody>
+        <tr key="1">
+          <td>
+            {selfRendered}
+          </td>
+        </tr>
+        <tr key="2">
+          <td>
+            {childrenRendered}
+          </td>
+        </tr>
+      </tbody>
+    </table>
   );
 }
 
@@ -172,8 +158,27 @@ function ViewAllPositionsPage() {
     )
   }
 
+  const rootPositions = positions.filter((position) =>
+    position.positionLevel === levelAtIndex(0).code);
+
+  if (rootPositions.length === 0) {
+    return (
+      <>
+        <p>There is no root position to display.</p>
+        <p><Link to={'/create'}>Add</Link> a new position.</p>
+      </>
+    )
+  }
+
   return (
-    <DisplayOfAllLevels positions={positions} />
+    <>
+      <p>Total of {positions.length} positions displayed.</p>
+      <p><Link to={'/create'}>Add</Link> a new position.</p>
+      <DisplayPositionWithChildren
+        selfPosition={positionAtIndex(rootPositions, 0)}
+        positions={positions}
+      />
+    </>
   );
 }
 
@@ -309,15 +314,8 @@ function normalizedPositionSansPositionSurrogateIDs(
 }
 
 function CreateOnePositionPage() {
-  const [positionMSPSI, assignTo_positionMSPSI] = useState<PositionMaybeSansPositionSurrogateIDs>({
-    employeeFirstName: '',
-    employeeLastName: '',
-    employeeNumber: '',
-    positionNumber: '',
-    positionLevel: '',
-    positionTitle: '',
-    parentPSID: '',
-  });
+  const [positionMSPSI, assignTo_positionMSPSI]
+    = useState<PositionMaybeSansPositionSurrogateIDs>(emptyPositionMSPSI);
 
   function handlePositionCreateFormSubmit(event: React.FormEvent<HTMLFormElement>) {
     // Prevent page from submitting.
@@ -384,15 +382,8 @@ function EditOnePositionPage() {
   const { positionSurrogateID } = useParams();
 
   const [isPositionFetchError, assignTo_isPositionFetchError] = useState<boolean>(true);
-  const [positionMSPSI, assignTo_positionMSPSI] = useState<PositionMaybeSansPositionSurrogateIDs>({
-    employeeFirstName: '',
-    employeeLastName: '',
-    employeeNumber: '',
-    positionNumber: '',
-    positionLevel: '',
-    positionTitle: '',
-    parentPSID: '',
-  });
+  const [positionMSPSI, assignTo_positionMSPSI]
+    = useState<PositionMaybeSansPositionSurrogateIDs>(emptyPositionMSPSI);
 
   useEffect(() => {
     fetch(dbmsUriBase() + '/positions/'+positionSurrogateID)
@@ -429,7 +420,7 @@ function EditOnePositionPage() {
     // Prevent page from submitting.
     event.preventDefault();
     const normProdMSPSI = normalizedPositionSansPositionSurrogateIDs(positionMSPSI);
-    const position: Position = { ...normProdMSPSI, positionSurrogateID: positionSurrogateID || '' };
+    const position: Position = { ...normProdMSPSI, positionSurrogateID: positionSurrogateID ?? '' };
     console.log('save button clicked with '+JSON.stringify(position));
     if (!isPosition(position)) {
       alert('Every field must be non-empty to save changes.');
@@ -494,15 +485,8 @@ function DeleteOnePositionPage() {
   const { positionSurrogateID } = useParams();
 
   const [isPositionFetchError, assignTo_isPositionFetchError] = useState<boolean>(true);
-  const [positionMSPSI, assignTo_positionMSPSI] = useState<PositionMaybeSansPositionSurrogateIDs>({
-    employeeFirstName: '',
-    employeeLastName: '',
-    employeeNumber: '',
-    positionNumber: '',
-    positionLevel: '',
-    positionTitle: '',
-    parentPSID: '',
-  });
+  const [positionMSPSI, assignTo_positionMSPSI]
+    = useState<PositionMaybeSansPositionSurrogateIDs>(emptyPositionMSPSI);
 
   useEffect(() => {
     fetch(dbmsUriBase() + '/positions/'+positionSurrogateID)
