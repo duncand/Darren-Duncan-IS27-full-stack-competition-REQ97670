@@ -60,13 +60,13 @@ function DisplayOfOneLevel({ levelCode, positions }: DisplayOfOneLevelProps) {
       <th></th>
       <th></th>
       <th>Position Surrogate ID</th>
+      <th>Parent Position Surrogate ID</th>
+      <th>Position Level</th>
+      <th>Position Title</th>
+      <th>Position Number</th>
       <th>Employee First Name</th>
       <th>Employee Last Name</th>
       <th>Employee Number</th>
-      <th>Position Number</th>
-      <th>Position Level</th>
-      <th>Position Title</th>
-      <th>Parent Position Surrogate ID</th>
     </tr>
   );
 
@@ -75,13 +75,13 @@ function DisplayOfOneLevel({ levelCode, positions }: DisplayOfOneLevelProps) {
       <td><Link to={'/edit/' + position.positionSurrogateID}>Edit</Link></td>
       <td><Link to={'/delete/' + position.positionSurrogateID}>Delete</Link></td>
       <td>{position.positionSurrogateID}</td>
+      <td>{position.parentPSID}</td>
+      <td>{position.positionLevel}</td>
+      <td>{position.positionTitle}</td>
+      <td>{position.positionNumber}</td>
       <td>{position.employeeFirstName}</td>
       <td>{position.employeeLastName}</td>
       <td>{position.employeeNumber}</td>
-      <td>{position.positionNumber}</td>
-      <td>{position.positionLevel}</td>
-      <td>{position.positionTitle}</td>
-      <td>{position.parentPSID}</td>
     </tr>
   );
 
@@ -191,6 +191,22 @@ function PositionFormFieldsSansPositionSurrogateIDs(
     return (
       <>
         <tr>
+          <td>Parent Position Surrogate ID:</td>
+          <td>{positionMSPSI.parentPSID}</td>
+        </tr>
+        <tr>
+          <td>Position Level:</td>
+          <td>{positionMSPSI.positionLevel}</td>
+        </tr>
+        <tr>
+          <td>Position Title:</td>
+          <td>{positionMSPSI.positionTitle}</td>
+        </tr>
+        <tr>
+          <td>Position Number:</td>
+          <td>{positionMSPSI.positionNumber}</td>
+        </tr>
+        <tr>
           <td>Employee First Name:</td>
           <td>{positionMSPSI.employeeFirstName}</td>
         </tr>
@@ -202,28 +218,52 @@ function PositionFormFieldsSansPositionSurrogateIDs(
           <td>Employee Number:</td>
           <td>{positionMSPSI.employeeNumber}</td>
         </tr>
-        <tr>
-          <td>Position Number:</td>
-          <td>{positionMSPSI.positionNumber}</td>
-        </tr>
-        <tr>
-          <td>Position Level:</td>
-          <td>{positionMSPSI.positionLevel}</td>
-        </tr>
-        <tr>
-          <td>Position Title:</td>
-          <td>{positionMSPSI.positionTitle}</td>
-        </tr>
-        <tr>
-          <td>Parent Position Surrogate ID:</td>
-          <td>{positionMSPSI.parentPSID}</td>
-        </tr>
       </>
     );
   }
 
   return (
     <>
+      <tr>
+        <td>Parent Position Surrogate ID:</td>
+        <td><input
+          type="text"
+          id="parentPSID"
+          name="parentPSID"
+          value={positionMSPSI.parentPSID}
+          onChange={(e) => assignTo_positionMSPSI({ ...positionMSPSI, parentPSID: e.target.value })}
+          /></td>
+      </tr>
+      <tr>
+        <td>Position Level:</td>
+        <td><input
+          type="text"
+          id="positionLevel"
+          name="positionLevel"
+          value={positionMSPSI.positionLevel}
+          onChange={(e) => assignTo_positionMSPSI({ ...positionMSPSI, positionLevel: e.target.value })}
+          /></td>
+      </tr>
+      <tr>
+        <td>Position Title:</td>
+        <td><input
+          type="text"
+          id="positionTitle"
+          name="positionTitle"
+          value={positionMSPSI.positionTitle}
+          onChange={(e) => assignTo_positionMSPSI({ ...positionMSPSI, positionTitle: e.target.value })}
+          /></td>
+      </tr>
+      <tr>
+        <td>Position Number:</td>
+        <td><input
+          type="text"
+          id="positionNumber"
+          name="positionNumber"
+          value={positionMSPSI.positionNumber}
+          onChange={(e) => assignTo_positionMSPSI({ ...positionMSPSI, positionNumber: e.target.value })}
+          /></td>
+      </tr>
       <tr>
         <td>Employee First Name:</td>
         <td><input
@@ -252,46 +292,6 @@ function PositionFormFieldsSansPositionSurrogateIDs(
           name="employeeNumber"
           value={positionMSPSI.employeeNumber}
           onChange={(e) => assignTo_positionMSPSI({ ...positionMSPSI, employeeNumber: e.target.value })}
-          /></td>
-      </tr>
-      <tr>
-        <td>Position Number:</td>
-        <td><input
-          type="text"
-          id="positionNumber"
-          name="positionNumber"
-          value={positionMSPSI.positionNumber}
-          onChange={(e) => assignTo_positionMSPSI({ ...positionMSPSI, positionNumber: e.target.value })}
-          /></td>
-      </tr>
-      <tr>
-        <td>Position Level:</td>
-        <td><input
-          type="text"
-          id="positionLevel"
-          name="positionLevel"
-          value={positionMSPSI.positionLevel}
-          onChange={(e) => assignTo_positionMSPSI({ ...positionMSPSI, positionLevel: e.target.value })}
-          /></td>
-      </tr>
-      <tr>
-        <td>Position Title:</td>
-        <td><input
-          type="text"
-          id="positionTitle"
-          name="positionTitle"
-          value={positionMSPSI.positionTitle}
-          onChange={(e) => assignTo_positionMSPSI({ ...positionMSPSI, positionTitle: e.target.value })}
-          /></td>
-      </tr>
-      <tr>
-        <td>Parent Position Surrogate ID:</td>
-        <td><input
-          type="text"
-          id="parentPSID"
-          name="parentPSID"
-          value={positionMSPSI.parentPSID}
-          onChange={(e) => assignTo_positionMSPSI({ ...positionMSPSI, parentPSID: e.target.value })}
           /></td>
       </tr>
     </>
@@ -358,7 +358,7 @@ function CreateOnePositionPage() {
 
   return (
     <>
-      <h2>Add an Position</h2>
+      <h2>Add a Position</h2>
       <p><Link to={'/'}>Return</Link> to the position listing page.</p>
       <form onSubmit={handlePositionCreateFormSubmit}>
         <table>
@@ -468,7 +468,7 @@ function EditOnePositionPage() {
 
   return (
     <>
-      <h2>Edit an Position</h2>
+      <h2>Edit a Position</h2>
       <p><Link to={'/'}>Return</Link> to the position listing page.</p>
       <form onSubmit={handlePositionEditFormSubmit}>
         <table>
@@ -568,7 +568,7 @@ function DeleteOnePositionPage() {
 
   return (
     <>
-      <h2>Delete an Position</h2>
+      <h2>Delete a Position</h2>
       <p><Link to={'/'}>Return</Link> to the position listing page.</p>
       <form onSubmit={handlePositionDeleteFormSubmit}>
         <table>

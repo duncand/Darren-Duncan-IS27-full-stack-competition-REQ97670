@@ -82,7 +82,7 @@ export class PositionsService {
     }
     if (!allLevelLimitsAreRespected(dataFileAsAny)) {
       const msg: string = 'PositionsService.readDataFile():'
-        + ' data file Positions exceed limits on an positionLevel'
+        + ' data file Positions exceed limits on a positionLevel'
         + ' from "' + this.dataFilePath + '"';
       console.log(msg);
       // This should result in a generic 500 API response.
@@ -133,7 +133,7 @@ export class PositionsService {
     // We will use a simple generator algorithm, that takes the rounded
     // result of multiplying the current UNIX timestamp in milliseconds
     // by a pseudo-random number, then modulo 2^16 so its easier to read,
-    // to generate an positionSurrogateID.
+    // to generate a positionSurrogateID.
     // As a guard for the tiny possibility of a collision with
     // an existing positionSurrogateID, in the event of a collision we will
     // append an "x" repeatedly until there isn't a collision.
