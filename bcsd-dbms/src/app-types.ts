@@ -85,6 +85,18 @@ export function isPositionMaybeSansPositionSurrogateIDs(given: any): boolean {
       || !isString(given.parentPSID)) {
     return false;
   }
+  // The 3 Employee fields must either all be populated or must all be blank,
+  // which indicates that employee holds the position or the position is
+  // vacant respectively.
+  if (given.employeeFirstName === ''
+      || given.employeeLastName === ''
+      || given.employeeNumber === '') {
+    if (given.employeeFirstName !== ''
+        || given.employeeLastName !== ''
+        || given.employeeNumber !== '') {
+      return false;
+    }
+  }
   return true;
 }
 
@@ -128,14 +140,26 @@ export function isPositions(given: any): boolean {
     && allLevelLimitsAreRespected(given);
 }
 
-export function maybeIndexOfMatchingPosition(
-    positions: Array<Position>, positionSurrogateID: string)
-    : number {
-  return positions.findIndex((elem) => elem.positionSurrogateID === positionSurrogateID);
+export function maybeIndexOfMatchingLevel(levelCode: string): number {
+  return levels.findIndex((level) => level.code === levelCode);
 }
 
 export function levelAtIndex(index: number): Level {
   return levels.at(index) ?? emptyLevel;
+}
+
+export function levelTitle(levelCode: string): string {
+  return levelAtIndex(maybeIndexOfMatchingLevel(levelCode)).title;
+}
+
+export function levelHasChildLevels(levelCode: string): boolean {
+  return (maybeIndexOfMatchingLevel(levelCode) < (levels.length - 1));
+}
+
+export function maybeIndexOfMatchingPosition(
+    positions: Array<Position>, positionSurrogateID: string)
+    : number {
+  return positions.findIndex((elem) => elem.positionSurrogateID === positionSurrogateID);
 }
 
 export function positionAtIndex(positions: Array<Position>, index: number): Position {

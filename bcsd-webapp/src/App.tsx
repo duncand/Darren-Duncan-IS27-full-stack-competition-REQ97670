@@ -15,6 +15,9 @@ import {
   isPositionSansPositionSurrogateIDs,
   isPositions,
   levelAtIndex,
+  levelHasChildLevels,
+  levelTitle,
+  maybeIndexOfMatchingLevel,
   positionAtIndex,
 } from './app-types';
 
@@ -34,6 +37,13 @@ interface DisplayPositionWithChildrenProps {
   positions: Array<Position>;
 }
 
+// Kludge for the special case of creating the root position.
+const dummy_value_not_a_PSID = 'NOT_A_PSID';
+
+function cleanDummyFromParamParentPSID(parentPSID: string): string {
+  return (parentPSID === dummy_value_not_a_PSID) ? '' : parentPSID;
+}
+
 function dbmsUriBase(): string {
   // Defaults match those of the API server.
   const host = process.env.REACT_APP_DBMS_HOST ?? '127.0.0.1';
@@ -42,50 +52,57 @@ function dbmsUriBase(): string {
 }
 
 function DisplayPositionWithChildren({ selfPosition, positions }: DisplayPositionWithChildrenProps) {
-
-  const selfRendered = (
-    <table>
-      <thead>
-        <tr>
-          <th></th>
-          <th></th>
-          <th>Position Surrogate ID</th>
-          <th>Parent Position Surrogate ID</th>
-          <th>Position Level</th>
-          <th>Position Title</th>
-          <th>Position Number</th>
-          <th>Employee First Name</th>
-          <th>Employee Last Name</th>
-          <th>Employee Number</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><Link to={'/edit/' + selfPosition.positionSurrogateID}>Edit</Link></td>
-          <td><Link to={'/delete/' + selfPosition.positionSurrogateID}>Delete</Link></td>
-          <td>{selfPosition.positionSurrogateID}</td>
-          <td>{selfPosition.parentPSID}</td>
-          <td>{selfPosition.positionLevel}</td>
-          <td>{selfPosition.positionTitle}</td>
-          <td>{selfPosition.positionNumber}</td>
-          <td>{selfPosition.employeeFirstName}</td>
-          <td>{selfPosition.employeeLastName}</td>
-          <td>{selfPosition.employeeNumber}</td>
-        </tr>
-      </tbody>
-    </table>
-  );
-
   const childPositions = positions.filter((position) =>
     position.parentPSID === selfPosition.positionSurrogateID);
 
-  var childrenRendered;
+  var deleteLink = (
+    <>*</>
+  );
   if (childPositions.length === 0) {
-    childrenRendered = (
-      <p>No children.</p>
+    deleteLink = (
+      <Link to={'/delete/' + selfPosition.positionSurrogateID}>Delete</Link>
     );
   }
-  else {
+
+  var employeeDetails = (
+    <>
+      (This position is vacant.)
+    </>
+  );
+  if (selfPosition.employeeNumber !== '') {
+    employeeDetails = (
+      <>
+        {selfPosition.employeeFirstName} {selfPosition.employeeLastName} ({selfPosition.employeeNumber})
+      </>
+    );
+  }
+
+  const selfRendered = (
+    <>
+      <td><Link to={'/edit/' + selfPosition.positionSurrogateID}>Edit</Link></td>
+      <td>{deleteLink}</td>
+      <td>{selfPosition.positionSurrogateID}</td>
+      <td>{levelTitle(selfPosition.positionLevel)}: {selfPosition.positionTitle} ({selfPosition.positionNumber})</td>
+      <td>{employeeDetails}</td>
+    </>
+  );
+
+  var addChildPrompt = (
+    <></>
+  );
+  if (levelHasChildLevels(selfPosition.positionLevel)) {
+    const childLevel = levelAtIndex(maybeIndexOfMatchingLevel(selfPosition.positionLevel) + 1);
+    addChildPrompt = (
+      <td colSpan={5}>
+        <Link to={'/create/' + selfPosition.positionSurrogateID + '/' + childLevel.code}>Add</Link> a new child {childLevel.title} position.
+      </td>
+    );
+  }
+
+  var childrenRendered = (
+    <></>
+  );
+  if (childPositions.length > 0) {
     const childTableRows = childPositions.map((position) =>
       <tr key={position.positionSurrogateID}>
         <td>
@@ -97,26 +114,27 @@ function DisplayPositionWithChildren({ selfPosition, positions }: DisplayPositio
       </tr>
     );
     childrenRendered = (
-      <table>
-        <tbody>
-          {childTableRows}
-        </tbody>
-      </table>
+      <td colSpan={5}>
+        <table>
+          <tbody>
+            {childTableRows}
+          </tbody>
+        </table>
+      </td>
     );
   }
 
   return (
     <table>
       <tbody>
-        <tr key="1">
-          <td>
-            {selfRendered}
-          </td>
+        <tr key="self">
+          {selfRendered}
         </tr>
-        <tr key="2">
-          <td>
-            {childrenRendered}
-          </td>
+        <tr key="add">
+          {addChildPrompt}
+        </tr>
+        <tr key="children">
+          {childrenRendered}
         </tr>
       </tbody>
     </table>
@@ -158,14 +176,15 @@ function ViewAllPositionsPage() {
     )
   }
 
+  const rootLevel = levelAtIndex(0);
   const rootPositions = positions.filter((position) =>
-    position.positionLevel === levelAtIndex(0).code);
+    position.positionLevel === rootLevel.code);
 
   if (rootPositions.length === 0) {
     return (
       <>
         <p>There is no root position to display.</p>
-        <p><Link to={'/create'}>Add</Link> a new position.</p>
+        <p><Link to={'/create/'+dummy_value_not_a_PSID+'/'+rootLevel.code}>Add</Link> a new {rootLevel.title} position.</p>
       </>
     )
   }
@@ -173,11 +192,23 @@ function ViewAllPositionsPage() {
   return (
     <>
       <p>Total of {positions.length} positions displayed.</p>
-      <p><Link to={'/create'}>Add</Link> a new position.</p>
       <DisplayPositionWithChildren
         selfPosition={positionAtIndex(rootPositions, 0)}
         positions={positions}
       />
+    </>
+  );
+}
+
+function PositionFormSuccessfulSaveInstructions() {
+  return (
+    <>
+      <p>For a successful save:</p>
+      <ul>
+        <li>All Position (Title / Number) fields must be filled in.</li>
+        <li>When an employee holds this position, all Employee (First Name / Last Name / Number) fields must be filled in.</li>
+        <li>When this position is vacant, all Employee (First Name / Last Name / Number) fields must NOT be filled in.</li>
+      </ul>
     </>
   );
 }
@@ -234,6 +265,7 @@ function PositionFormFieldsSansPositionSurrogateIDs(
           name="parentPSID"
           value={positionMSPSI.parentPSID}
           onChange={(e) => assignTo_positionMSPSI({ ...positionMSPSI, parentPSID: e.target.value })}
+          readOnly
           /></td>
       </tr>
       <tr>
@@ -244,6 +276,7 @@ function PositionFormFieldsSansPositionSurrogateIDs(
           name="positionLevel"
           value={positionMSPSI.positionLevel}
           onChange={(e) => assignTo_positionMSPSI({ ...positionMSPSI, positionLevel: e.target.value })}
+          readOnly
           /></td>
       </tr>
       <tr>
@@ -314,8 +347,13 @@ function normalizedPositionSansPositionSurrogateIDs(
 }
 
 function CreateOnePositionPage() {
+  const { parentPSID, positionLevel } = useParams();
+
   const [positionMSPSI, assignTo_positionMSPSI]
-    = useState<PositionMaybeSansPositionSurrogateIDs>(emptyPositionMSPSI);
+    = useState<PositionMaybeSansPositionSurrogateIDs>(
+      { ...emptyPositionMSPSI,
+      parentPSID: cleanDummyFromParamParentPSID(parentPSID ?? ''),
+      positionLevel: positionLevel ?? '' });
 
   function handlePositionCreateFormSubmit(event: React.FormEvent<HTMLFormElement>) {
     // Prevent page from submitting.
@@ -323,7 +361,7 @@ function CreateOnePositionPage() {
     const normProdMSPSI = normalizedPositionSansPositionSurrogateIDs(positionMSPSI);
     console.log('save button clicked with '+JSON.stringify(normProdMSPSI));
     if (!isPositionSansPositionSurrogateIDs(normProdMSPSI)) {
-      alert('Every field must be non-empty to save changes.');
+      alert('Some fields are not filled correctly, so the form can not be saved.');
       return;
     }
     fetch(dbmsUriBase() + '/positions/', {
@@ -355,6 +393,7 @@ function CreateOnePositionPage() {
     <>
       <h2>Add a Position</h2>
       <p><Link to={'/'}>Return</Link> to the position listing page.</p>
+      <PositionFormSuccessfulSaveInstructions/>
       <form onSubmit={handlePositionCreateFormSubmit}>
         <table>
           <tbody>
@@ -423,7 +462,7 @@ function EditOnePositionPage() {
     const position: Position = { ...normProdMSPSI, positionSurrogateID: positionSurrogateID ?? '' };
     console.log('save button clicked with '+JSON.stringify(position));
     if (!isPosition(position)) {
-      alert('Every field must be non-empty to save changes.');
+      alert('Some fields are not filled correctly, so the form can not be saved.');
       return;
     }
     fetch(dbmsUriBase() + '/positions/'+positionSurrogateID+'/', {
@@ -458,6 +497,7 @@ function EditOnePositionPage() {
     <>
       <h2>Edit a Position</h2>
       <p><Link to={'/'}>Return</Link> to the position listing page.</p>
+      <PositionFormSuccessfulSaveInstructions/>
       <form onSubmit={handlePositionEditFormSubmit}>
         <table>
           <tbody>
@@ -579,7 +619,7 @@ function App() {
     <BrowserRouter>
       <h1>Province of British Columbia - Staff Directory (BCSD)</h1>
       <Routes>
-        <Route path="/create" element={<CreateOnePositionPage />} />
+        <Route path="/create/:parentPSID/:positionLevel" element={<CreateOnePositionPage />} />
         <Route path="/" element={<ViewAllPositionsPage />} />
         <Route path="/edit/:positionSurrogateID" element={<EditOnePositionPage />} />
         <Route path="/delete/:positionSurrogateID" element={<DeleteOnePositionPage />} />
