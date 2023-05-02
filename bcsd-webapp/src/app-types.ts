@@ -1,6 +1,7 @@
 export interface PositionMaybeSansPositionSurrogateIDs {
   employeeFirstName: string;
   employeeLastName: string;
+  employeeNumber: string;
   positionNumber: string;
   positionLevel: string;
   positionTitle: string;
@@ -58,6 +59,8 @@ export function isPositionMaybeSansPositionSurrogateIDs(given: any): boolean {
       || !isNonEmptyString(given.employeeFirstName)
       || !given.hasOwnProperty('employeeLastName')
       || !isNonEmptyString(given.employeeLastName)
+      || !given.hasOwnProperty('employeeNumber')
+      || !isNonEmptyString(given.employeeNumber)
       || !given.hasOwnProperty('positionNumber')
       || !isNonEmptyString(given.positionNumber)
       || !given.hasOwnProperty('positionLevel')
@@ -71,12 +74,12 @@ export function isPositionMaybeSansPositionSurrogateIDs(given: any): boolean {
 
 export function isPositionSansPositionSurrogateIDs(given: any): boolean {
   return isPositionMaybeSansPositionSurrogateIDs(given)
-    && Object.keys(given).length === 5;
+    && Object.keys(given).length === 6;
 }
 
 export function isPosition(given: any): boolean {
   return isPositionMaybeSansPositionSurrogateIDs(given)
-    && Object.keys(given).length === 6
+    && Object.keys(given).length === 7
     && given.hasOwnProperty('positionSurrogateID')
     && isNonEmptyString(given.positionSurrogateID);
 }

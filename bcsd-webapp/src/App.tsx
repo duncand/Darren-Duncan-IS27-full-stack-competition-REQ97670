@@ -75,6 +75,7 @@ function DisplayOfOneLevel({ levelCode, positions }: DisplayOfOneLevelProps) {
       <td>{position.positionSurrogateID}</td>
       <td>{position.employeeFirstName}</td>
       <td>{position.employeeLastName}</td>
+      <td>{position.employeeNumber}</td>
       <td>{position.positionNumber}</td>
       <td>{position.positionLevel}</td>
       <td>{position.positionTitle}</td>
@@ -195,6 +196,10 @@ function PositionFormFieldsSansPositionSurrogateIDs(
           <td>{positionMSPSI.employeeLastName}</td>
         </tr>
         <tr>
+          <td>Employee Number:</td>
+          <td>{positionMSPSI.employeeNumber}</td>
+        </tr>
+        <tr>
           <td>Position Number:</td>
           <td>{positionMSPSI.positionNumber}</td>
         </tr>
@@ -230,6 +235,16 @@ function PositionFormFieldsSansPositionSurrogateIDs(
           name="employeeLastName"
           value={positionMSPSI.employeeLastName}
           onChange={(e) => assignTo_positionMSPSI({ ...positionMSPSI, employeeLastName: e.target.value })}
+          /></td>
+      </tr>
+      <tr>
+        <td>Employee Number:</td>
+        <td><input
+          type="text"
+          id="employeeNumber"
+          name="employeeNumber"
+          value={positionMSPSI.employeeNumber}
+          onChange={(e) => assignTo_positionMSPSI({ ...positionMSPSI, employeeNumber: e.target.value })}
           /></td>
       </tr>
       <tr>
@@ -271,6 +286,7 @@ function normalizedPositionSansPositionSurrogateIDs(
   return {
     employeeFirstName: positionMSPSI.employeeFirstName.trim(),
     employeeLastName: positionMSPSI.employeeLastName.trim(),
+    employeeNumber: positionMSPSI.employeeNumber.trim(),
     positionNumber: positionMSPSI.positionNumber.trim(),
     positionLevel: positionMSPSI.positionLevel.trim(),
     positionTitle: positionMSPSI.positionTitle.trim(),
@@ -281,6 +297,7 @@ function CreateOnePositionPage() {
   const [positionMSPSI, assignTo_positionMSPSI] = useState<PositionMaybeSansPositionSurrogateIDs>({
     employeeFirstName: '',
     employeeLastName: '',
+    employeeNumber: '',
     positionNumber: '',
     positionLevel: '',
     positionTitle: '',
@@ -354,6 +371,7 @@ function EditOnePositionPage() {
   const [positionMSPSI, assignTo_positionMSPSI] = useState<PositionMaybeSansPositionSurrogateIDs>({
     employeeFirstName: '',
     employeeLastName: '',
+    employeeNumber: '',
     positionNumber: '',
     positionLevel: '',
     positionTitle: '',
@@ -462,6 +480,7 @@ function DeleteOnePositionPage() {
   const [positionMSPSI, assignTo_positionMSPSI] = useState<PositionMaybeSansPositionSurrogateIDs>({
     employeeFirstName: '',
     employeeLastName: '',
+    employeeNumber: '',
     positionNumber: '',
     positionLevel: '',
     positionTitle: '',

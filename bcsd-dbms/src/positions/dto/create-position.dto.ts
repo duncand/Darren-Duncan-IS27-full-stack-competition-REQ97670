@@ -23,6 +23,14 @@ export class CreatePositionDto {
     required: true,
     example: '703',
   })
+  employeeNumber: string;
+
+  @ApiProperty({
+    type: String,
+    minLength: 1,
+    required: true,
+    example: '17',
+  })
   positionNumber: string;
 
   @ApiProperty({
@@ -37,7 +45,7 @@ export class CreatePositionDto {
     type: String,
     minLength: 1,
     required: true,
-    example: 'Good work guy.',
+    example: 'Cat Herder',
   })
   positionTitle: string;
 }

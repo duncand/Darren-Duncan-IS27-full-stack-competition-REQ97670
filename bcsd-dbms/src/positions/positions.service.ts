@@ -155,6 +155,7 @@ export class PositionsService {
       "positionSurrogateID": this.generateDistinctPositionSurrogateID(positions),
       "employeeFirstName": createPositionDto.employeeFirstName,
       "employeeLastName": createPositionDto.employeeLastName,
+      "employeeNumber": createPositionDto.employeeNumber,
       "positionNumber": createPositionDto.positionNumber,
       "positionLevel": createPositionDto.positionLevel,
       "positionTitle": createPositionDto.positionTitle,
