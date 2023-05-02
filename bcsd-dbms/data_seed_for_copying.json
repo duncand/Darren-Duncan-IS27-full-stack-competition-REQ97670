@@ -1,12 +1,72 @@
 [
   {
-    "positionSurrogateID": "53647",
-    "employeeFirstName": "John",
-    "employeeLastName": "Doe",
-    "employeeNumber": "703",
-    "positionNumber": "17",
+    "positionSurrogateID": "s1",
+    "parentPSID": "",
     "positionLevel": "director",
     "positionTitle": "Cat Herder",
-    "parentPSID": ""
+    "positionNumber": "p1",
+    "employeeFirstName": "John",
+    "employeeLastName": "Doe",
+    "employeeNumber": "e1"
+  },
+  {
+    "positionSurrogateID": "s2",
+    "parentPSID": "s1",
+    "positionLevel": "senior_manager",
+    "positionTitle": "Cat Herder",
+    "positionNumber": "p2",
+    "employeeFirstName": "John",
+    "employeeLastName": "Doe",
+    "employeeNumber": "e2"
+  },
+  {
+    "positionSurrogateID": "s3",
+    "parentPSID": "s1",
+    "positionLevel": "senior_manager",
+    "positionTitle": "Cat Herder",
+    "positionNumber": "p3",
+    "employeeFirstName": "John",
+    "employeeLastName": "Doe",
+    "employeeNumber": "e3"
+  },
+  {
+    "positionSurrogateID": "s4",
+    "parentPSID": "s3",
+    "positionLevel": "manager",
+    "positionTitle": "Cat Herder",
+    "positionNumber": "p4",
+    "employeeFirstName": "John",
+    "employeeLastName": "Doe",
+    "employeeNumber": "e4"
+  },
+  {
+    "positionSurrogateID": "s5",
+    "parentPSID": "s3",
+    "positionLevel": "manager",
+    "positionTitle": "Cat Herder",
+    "positionNumber": "p4",
+    "employeeFirstName": "John",
+    "employeeLastName": "Doe",
+    "employeeNumber": "e4"
+  },
+  {
+    "positionSurrogateID": "s6",
+    "parentPSID": "s5",
+    "positionLevel": "senior_developer",
+    "positionTitle": "Cat Herder",
+    "positionNumber": "p6",
+    "employeeFirstName": "John",
+    "employeeLastName": "Doe",
+    "employeeNumber": "e6"
+  },
+  {
+    "positionSurrogateID": "s7",
+    "parentPSID": "s6",
+    "positionLevel": "junior_developer",
+    "positionTitle": "Cat Herder",
+    "positionNumber": "p7",
+    "employeeFirstName": "John",
+    "employeeLastName": "Doe",
+    "employeeNumber": "e7"
   }
 ]
